@@ -10,51 +10,58 @@ constexpr int TWO_TO_POWER_OF(const int X)
     return 1 << X; // Bit shift to replicate 2^X
 }
 
+template <size_t Levels, int Bits>
+struct PageTable;  // Forward Declaration
+
+template <size_t Levels, int Bits>
 struct PageNode
 {
-    int depth;
-};
+    const PageTable<Levels, Bits>& pageTable;
+    int nodeDepth;
+}; // Page Node can't exist without a Pagetable
 
-template <int Bits>
-struct InternalNode : public PageNode
+template <size_t Levels, int Bits>
+struct InternalNode : public PageNode<Levels, Bits>
 {
     std::array<InternalNode*, TWO_TO_POWER_OF(Bits)> childNodes;
 };
 
-template <int Bits>
-struct LeafNode : public PageNode
+template <size_t Levels, int Bits>
+struct LeafNode : public PageNode<Levels, Bits>
 {
     std::array<PageMap*, TWO_TO_POWER_OF(Bits)> pageMaps; 
 };
 
-template <int Bits>
-InternalNode<Bits>* allocateInternalNode(const int depth)
+template <size_t Levels, int Bits>
+InternalNode<Levels, Bits>* allocateInternalNode(const PageTable<Levels, Bits>& pageTable, const int nodeDepth)
 {
-    InternalNode<Bits>* internalNode = new InternalNode<Bits>;
-    internalNode->depth = depth;
-    for (InternalNode<Bits>* childNode : internalNode->childNodes)
+    auto internalNode = new InternalNode<Levels, Bits>{pageTable};
+    internalNode->nodeDepth = nodeDepth;
+    for (auto& childNode : internalNode->childNodes)
     {
         childNode = NULL;
     }
     return internalNode;
 }
 
-template <int Bits>
-LeafNode<Bits>* allocateLeafNode(const int depth)
+template <size_t Levels, int Bits>
+LeafNode<Levels, Bits>* allocateLeafNode(const PageTable<Levels, Bits>& pageTable, const int nodeDepth)
 {
-    LeafNode<Bits>* leafNode = new LeafNode<Bits>;
-    leafNode->depth = depth;
-    for (LeafNode<Bits>* pageMap : leafNode->pageMaps)
+    auto leafNode = new LeafNode<Levels, Bits>{pageTable};
+    leafNode->nodeDepth = nodeDepth;
+    for (auto& pageMap : leafNode->pageMaps)
     {
         pageMap = NULL;
     }
     return leafNode;
 }
 
-template <int Bits>
-PageNode* allocateNode(int depth, int totalLevels)
+template <size_t Levels, int Bits>
+PageNode<Levels, Bits>* allocateNode(const PageTable<Levels, Bits>& pageTable, const int nodeDepth)
 {
-    return depth == totalLevels-1 ? allocateLeafNode<Bits>(depth) : allocateInternalNode<Bits>(depth);   // Subtract by one to offset index
+    return nodeDepth == pageTable.treeDepth -1 ? // Subtract by one to offset index
+    (PageNode<Levels, Bits>*)allocateLeafNode<Levels, Bits>(pageTable, nodeDepth) : 
+    (PageNode<Levels, Bits>*)allocateInternalNode<Levels, Bits>(pageTable, nodeDepth);   
 }
 
 #endif

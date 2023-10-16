@@ -77,8 +77,80 @@ void testPageTable()
         allTestsPassed = false;
     }
 
+    if (pageTable.next_level->nodeDepth != 0)
+    {
+        printf("EntryCount test failed with value %d, expected %d\n", pageTable.next_level->nodeDepth, 0);
+        allTestsPassed = false;
+    }
+
+
     if (allTestsPassed) printf("All Page Table Tests Passed!\n");
 }
+
+void testPageTableOneLevel()
+{
+
+}
+
+void testPageNode()
+{
+    constexpr const int LEVELS = 3;
+    constexpr const int BITS = 8;
+    PageTable<LEVELS, BITS> pageTable = createPageTable<LEVELS, BITS>(LEVELS, BITS);
+    
+    bool allTestsPassed = true;
+
+    if (pageTable.bitMasks[0] != 0xFF000000)
+    {
+        printf("Bitmask test failed with value %x, expected %x\n", pageTable.bitMasks[0], 0xFF000000);
+        allTestsPassed = false;
+    }
+    if (pageTable.bitMasks[1] != 0x00FF0000)
+    {
+        printf("Bitmask test failed with value %x, expected %x\n", pageTable.bitMasks[0], 0xFF000000);
+        allTestsPassed = false;
+    } 
+    if (pageTable.bitMasks[2] != 0x0000FF00)
+    {
+        printf("Bitmask test failed with value %x, expected %x\n", pageTable.bitMasks[0], 0xFF000000);
+        allTestsPassed = false;
+    } 
+
+    if (pageTable.bitShifts[0] != 24)
+    {
+        printf("BitShift test failed with value %d, expected %d\n", pageTable.bitShifts[0], 24);
+        allTestsPassed = false;
+    }
+    if (pageTable.bitShifts[1] != 16)
+    {
+        printf("BitShift test failed with value %d, expected %d\n", pageTable.bitShifts[0], 16);
+        allTestsPassed = false;
+    } 
+    if (pageTable.bitShifts[2] != 8)
+    {
+        printf("BitShift test failed with value %d, expected %d\n", pageTable.bitShifts[0], 8);
+        allTestsPassed = false;
+    }
+
+    if (pageTable.entryCounts[0] != 256)
+    {
+        printf("EntryCount test failed with value %d, expected %d\n", pageTable.entryCounts[0], 256);
+        allTestsPassed = false;
+    }
+    if (pageTable.entryCounts[1] != 256)
+    {
+        printf("EntryCount test failed with value %d, expected %d\n", pageTable.entryCounts[0], 256);
+        allTestsPassed = false;
+    } 
+    if (pageTable.entryCounts[2] != 256)
+    {
+        printf("EntryCount test failed with value %d, expected %d\n", pageTable.entryCounts[0], 256);
+        allTestsPassed = false;
+    }
+
+    if (allTestsPassed) printf("All Page Table Tests Passed!\n");
+}
+
 
 // Test Page Table
 int main(int argc, char * argv[])
