@@ -25,7 +25,7 @@ template <size_t Levels, int Bits>
 struct InternalNode : public PageNode<Levels, Bits>
 {
     InternalNode(const PageTable<Levels, Bits>& pageTable) : PageNode<Levels, Bits>(pageTable) {};
-    std::array<InternalNode*, TWO_TO_POWER_OF(Bits)> childNodes;
+    std::array<PageNode<Levels, Bits>*, TWO_TO_POWER_OF(Bits)> childNodes;
 };
 
 template <size_t Levels, int Bits>
@@ -62,7 +62,7 @@ LeafNode<Levels, Bits>* allocateLeafNode(const PageTable<Levels, Bits>& pageTabl
 template <size_t Levels, int Bits>
 PageNode<Levels, Bits>* allocateNode(const PageTable<Levels, Bits>& pageTable, const int nodeDepth)
 {
-    return nodeDepth == pageTable.treeDepth -1 ? // Subtract by one to offset index
+    return nodeDepth == pageTable.treeDepth - 1 ? // Subtract by one to offset index
     (PageNode<Levels, Bits>*)allocateLeafNode<Levels, Bits>(pageTable, nodeDepth) : 
     (PageNode<Levels, Bits>*)allocateInternalNode<Levels, Bits>(pageTable, nodeDepth);   
 }

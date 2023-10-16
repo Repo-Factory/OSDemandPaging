@@ -14,12 +14,11 @@ void assignVPNToFrame(PageNode<Levels, Bits>* pageNode, const unsigned int jumpI
 }
 
 template<size_t Levels, int Bits>
-InternalNode<Levels, Bits>* allocateNextLevel(PageNode<Levels, Bits>* pageNode, const unsigned int jumpIndex)
+PageNode<Levels, Bits>* allocateNextLevel(PageNode<Levels, Bits>* pageNode, const unsigned int jumpIndex)
 {
     auto currentInternalNode = (InternalNode<Levels, Bits>*)pageNode;
     auto nextInternalNode = currentInternalNode->childNodes[jumpIndex];
-    nextInternalNode = new InternalNode(pageNode->pageTable);
-    nextInternalNode->nodeDepth = pageNode->nodeDepth+1;
+    nextInternalNode = allocateNode(pageNode->pageTable, pageNode->nodeDepth+1);
     return nextInternalNode;
 }
 
