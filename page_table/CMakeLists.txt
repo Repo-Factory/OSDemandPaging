@@ -3,6 +3,8 @@ project(page_table)
 
 get_filename_component(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}" DIRECTORY)
 
+SET(CMAKE_CXX_FLAGS_DEBUG "-g")
+SET(CMAKE_CXX_FLAGS "-g")
 # find_library(LIBRARY library)
 
 file(GLOB SOURCES src/*.cpp)

@@ -19,6 +19,7 @@
  ******************************************************************************/
 
 #include "page_table.h"
+#include "page_functions.h"
 #include <stdio.h>
 
 void testPageTable()
@@ -83,7 +84,7 @@ void testPageTable()
         allTestsPassed = false;
     }
 
-    // insertVpn2PfnMapping(&pageTable, 0xFEFFFEC2, 3);
+    insertVpn2PfnMapping(&pageTable, 0xFEFFFEC2, 3);
 
     if (allTestsPassed) printf("All Page Table Tests Passed!\n");
 }

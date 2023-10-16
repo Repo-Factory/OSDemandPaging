@@ -40,9 +40,9 @@ InternalNode<Levels, Bits>* allocateInternalNode(const PageTable<Levels, Bits>& 
 {
     auto internalNode = new InternalNode<Levels, Bits>{pageTable};
     internalNode->nodeDepth = nodeDepth;
-    for (auto& childNode : internalNode->childNodes)
+    for (auto childNode : internalNode->childNodes)
     {
-        childNode = NULL;
+        childNode = nullptr;
     }
     return internalNode;
 }
@@ -52,9 +52,9 @@ LeafNode<Levels, Bits>* allocateLeafNode(const PageTable<Levels, Bits>& pageTabl
 {
     auto leafNode = new LeafNode<Levels, Bits>{pageTable};
     leafNode->nodeDepth = nodeDepth;
-    for (auto& pageMap : leafNode->pageMaps)
+    for (auto pageMap : leafNode->pageMaps)
     {
-        pageMap = NULL;
+        pageMap = nullptr;
     }
     return leafNode;
 }
