@@ -6,36 +6,43 @@
 unsigned int getVPNFromVirtualAddress(unsigned int virtualAddress, unsigned int mask, unsigned int shift);
 
 template<size_t Levels, int Bits>
-void assignVPNToFrame(PageNode<Levels, Bits>* pageLevel, const unsigned int jumpIndex, int frame)
+void assignVPNToFrame(PageNode<Levels, Bits>* pageNode, const unsigned int jumpIndex, int frame)
 {
-    auto leafNode = (LeafNode<Levels, Bits>*)pageLevel;
+    auto leafNode = (LeafNode<Levels, Bits>*)pageNode;
     leafNode->pageMaps[jumpIndex] = new PageMap;
     leafNode->pageMaps[jumpIndex]->frame_number = frame;
 }
 
 template<size_t Levels, int Bits>
-InternalNode<Levels, Bits>* allocateNextLevel(PageNode<Levels, Bits>* pageLevel, const unsigned int jumpIndex)
+InternalNode<Levels, Bits>* allocateNextLevel(PageNode<Levels, Bits>* pageNode, const unsigned int jumpIndex)
 {
-    auto internalNode = (InternalNode<Levels, Bits>*)pageLevel;
-    internalNode->childNodes[jumpIndex] = new InternalNode(pageLevel->pageTable);
-    internalNode->childNodes[jumpIndex]->nodeDepth = pageLevel->nodeDepth+1;
-    return internalNode->childNodes[jumpIndex];
+    auto currentInternalNode = (InternalNode<Levels, Bits>*)pageNode;
+    auto nextInternalNode = currentInternalNode->childNodes[jumpIndex];
+    nextInternalNode = new InternalNode(pageNode->pageTable);
+    nextInternalNode->nodeDepth = pageNode->nodeDepth+1;
+    return nextInternalNode;
 }
 
 template<size_t Levels, int Bits>
-void insertVpn2PfnMapping(PageNode<Levels, Bits>* pageLevel, unsigned int vpn, int frame)
+const unsigned int getJumpIndex(PageNode<Levels, Bits>* pageNode, unsigned int vpn)
 {
-    const int nodeDepth = pageLevel->nodeDepth;
-    const auto pageTable = pageLevel->pageTable;
+    const int nodeDepth = pageNode->nodeDepth;
+    const auto pageTable = pageNode->pageTable;
     const int mask = pageTable.bitMasks[nodeDepth];
     const int shift = pageTable.bitShifts[nodeDepth];
-    const unsigned int jumpIndex = (vpn & mask) >> shift;
-    if (nodeDepth == pageTable.treeDepth - 1)
+    return (vpn & mask) >> shift;
+}
+
+template<size_t Levels, int Bits>
+void insertVpn2PfnMapping(PageNode<Levels, Bits>* pageNode, unsigned int vpn, int frame)
+{
+    const unsigned int jumpIndex = getJumpIndex(pageNode, vpn);
+    if (pageNode->nodeDepth == pageNode->pageTable.treeDepth-1) // -1 To account for Index starting from 0 
     {
-        return assignVPNToFrame(pageLevel, jumpIndex, frame);   
+        return assignVPNToFrame(pageNode, jumpIndex, frame);   
     }
-    auto internalNode = allocateNextLevel(pageLevel, jumpIndex);
-    insertVpn2PfnMapping(internalNode, vpn, frame);
+    auto internalNode = allocateNextLevel(pageNode, jumpIndex);
+    return insertVpn2PfnMapping(internalNode, vpn, frame);
 }
 
 template<size_t Levels, int Bits>
