@@ -83,6 +83,7 @@ void testPageTable()
         allTestsPassed = false;
     }
 
+    // insertVpn2PfnMapping(&pageTable, 0xFEFFFEC2, 3);
 
     if (allTestsPassed) printf("All Page Table Tests Passed!\n");
 }

@@ -16,6 +16,7 @@ struct PageTable;  // Forward Declaration
 template <size_t Levels, int Bits>
 struct PageNode
 {
+    PageNode(const PageTable<Levels, Bits>& pageTable) : pageTable{pageTable} {}
     const PageTable<Levels, Bits>& pageTable;
     int nodeDepth;
 }; // Page Node can't exist without a Pagetable
@@ -23,12 +24,14 @@ struct PageNode
 template <size_t Levels, int Bits>
 struct InternalNode : public PageNode<Levels, Bits>
 {
+    InternalNode(const PageTable<Levels, Bits>& pageTable) : PageNode<Levels, Bits>(pageTable) {};
     std::array<InternalNode*, TWO_TO_POWER_OF(Bits)> childNodes;
 };
 
 template <size_t Levels, int Bits>
 struct LeafNode : public PageNode<Levels, Bits>
 {
+    LeafNode(const PageTable<Levels, Bits>& pageTable) : PageNode<Levels, Bits>(pageTable) {};
     std::array<PageMap*, TWO_TO_POWER_OF(Bits)> pageMaps; 
 };
 
