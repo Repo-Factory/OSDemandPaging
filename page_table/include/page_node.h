@@ -5,9 +5,11 @@
 #include <array>
 #include <cstddef>
 
+#define BIT 1
+
 constexpr int TWO_TO_POWER_OF(const int X)
 {
-    return 1 << X; // Bit shift to replicate 2^X
+    return BIT << X; // Bit shift to replicate 2^X
 }
 
 template <size_t Levels, int Bits>
@@ -19,7 +21,7 @@ struct PageNode
     PageNode(const PageTable<Levels, Bits>& pageTable) : pageTable{pageTable} {}
     const PageTable<Levels, Bits>& pageTable;
     int nodeDepth;
-}; // Page Node can't exist without a Pagetable
+}; // Page Node can't exist without a Pagetable so we will pass const ref in initializer list
 
 template <size_t Levels, int Bits>
 struct InternalNode : public PageNode<Levels, Bits>
@@ -62,7 +64,7 @@ LeafNode<Levels, Bits>* allocateLeafNode(const PageTable<Levels, Bits>& pageTabl
 template <size_t Levels, int Bits>
 PageNode<Levels, Bits>* allocateNode(const PageTable<Levels, Bits>& pageTable, const int nodeDepth)
 {
-    return nodeDepth == pageTable.treeDepth - 1 ? // Subtract by one to offset index
+    return nodeDepth == pageTable.treeDepth ? // Is leaf node
     (PageNode<Levels, Bits>*)allocateLeafNode<Levels, Bits>(pageTable, nodeDepth) : 
     (PageNode<Levels, Bits>*)allocateInternalNode<Levels, Bits>(pageTable, nodeDepth);   
 }

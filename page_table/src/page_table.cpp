@@ -1,9 +1,7 @@
 /* 
- * @brief page_table does something cool
+ * @brief page_table is a templated class
  *
- * more
- * more
- * more
+ * See page_table.h for more details
  */
 
 #include "page_table.h"
@@ -13,7 +11,7 @@
  * bits. Returns the virtual page number. This function can be used to extract the VPN of
  * any level or the full VPN by supplying the appropriate parameters.
  */
-unsigned int getVPNFromVirtualAddress(unsigned int virtualAddress, unsigned int mask, unsigned int shift)
+const unsigned int getVPNFromVirtualAddress(const unsigned int virtualAddress, const unsigned int mask, const unsigned int shift)
 {
     return (virtualAddress & mask) >> shift;
 }
