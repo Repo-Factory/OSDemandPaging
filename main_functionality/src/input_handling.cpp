@@ -30,14 +30,20 @@ namespace
 
 // Takes in function pointer param (well, C++ version) to perform passed in operation on each string of file passed in
 // I chose to do this to keep the function generic to file handling and keep file traversal logic out of main
-void FileHandler::forEachLineOfFile(const std::string& filename, const std::function<void(std::string&)> performOperation)
+
+void FileHandler::forEachLineOfFiles(const std::string& file1, const std::string& file2, TwoLineFunction performOperation)
 {
-    std::ifstream stream = openFile(filename);
-    std::string line;
-    while (std::getline(stream, line)) {
-        performOperation(line);
+    std::ifstream stream1 = openFile(file1);
+    std::ifstream stream2 = openFile(file2);
+    std::string line1;
+    std::string line2;
+    while (!(stream1.eof() || stream2.eof())) {
+        std::getline(stream1, line1);
+        std::getline(stream2, line2);
+        performOperation(line1, line2);
     }
-    stream.close();
+    stream1.close();
+    stream2.close();
 }
 
 /* Count number of lines in file */
