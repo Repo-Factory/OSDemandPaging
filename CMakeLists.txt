@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 3.5)
 project(demand_paging)
 
+SET(CMAKE_CXX_FLAGS_DEBUG "-g")
+SET(CMAKE_CXX_FLAGS "-g")
+
 file(GLOB SOURCES 
     main_functionality/src/*.cpp
     page_table/src/*.cpp
     page_replacement/src/*.cpp
-    helpers/bit_operations/src/*.cpp
     helpers/logging/src/*.cpp
-    helpers/optional/src/*.cpp
     helpers/vr_trace/src/*.cpp
 )
 
@@ -15,9 +16,7 @@ include_directories(
     main_functionality/include
     page_table/include
     page_replacement/include
-    helpers/bit_operations/include
     helpers/logging/include
-    helpers/optional/include
     helpers/vr_trace/include
 )
 

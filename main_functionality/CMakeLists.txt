@@ -7,19 +7,15 @@ file(GLOB SOURCES
     ${SRC_DIR}/main_functionality/src/*.cpp
     ${SRC_DIR}/page_table/src/*.cpp
     ${SRC_DIR}/page_replacement/src/*.cpp
-    ${SRC_DIR}/helpers/bit_operations/src/*.cpp
-    ${SRC_DIR}/helpers/logging/src/*.cpp
-    ${SRC_DIR}/helpers/optional/src/*.cpp
-    ${SRC_DIR}/helpers/vr_trace/src/*.cpp
+    ${SRC_DIR}/helpers/logging/src/*.c
+    ${SRC_DIR}/helpers/vr_trace/src/*.c
 )
 
 include_directories(
     ${SRC_DIR}/main_functionality/include
     ${SRC_DIR}/page_table/include
     ${SRC_DIR}/page_replacement/include
-    ${SRC_DIR}/helpers/bit_operations/include
     ${SRC_DIR}/helpers/logging/include
-    ${SRC_DIR}/helpers/optional/include
     ${SRC_DIR}/helpers/vr_trace/include
 )
 

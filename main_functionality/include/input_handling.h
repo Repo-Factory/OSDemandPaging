@@ -10,7 +10,7 @@ using TwoLineFunction = const std::function<void(std::string&, std::string&)>;
 
 namespace FileHandler
 {
-    void forEachLineOfFiles(const std::string& file1, const std::string& file2, TwoLineFunction performOperation);
+    void traverseFiles(const std::string& file1, const std::string& file2, TwoLineFunction performOperation);
 }
 
 #endif

@@ -8,8 +8,8 @@
             "type": "lldb",
             "request": "launch",
             "name": "Debug",
-            "program": "/home/robox/school/cs480/assignment-three/demand_paging/page_replacement/build/page_replacement_exec",
-            "args": [],
+            "program": "/home/robox/school/cs480/assignment-three/demand_paging/build/demand_paging_exec",
+            "args": ["/home/robox/school/cs480/assignment-three/demand_paging/trace.tr", "/home/robox/school/cs480/assignment-three/demand_paging/readswrites.txt", "12", "8"],
             "cwd": "${workspaceFolder}"
         }
     ]

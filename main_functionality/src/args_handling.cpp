@@ -33,7 +33,7 @@
 #define INVALID_N_FLAG_ERROR_MESSAGE "Number of memory accesses must be a number, greater than 0"
 #define INVALID_F_FLAG_ERROR_MESSAGE "Number of available frames must be a number, greater than 0"
 #define INVALID_A_FLAG_ERROR_MESSAGE "Age of last access considered recent must be a number, greater than 0"
-#define DEFAULT_ERROR_MESSAGE "Usage: %s tracefile accessfile -n memory_accesses -f physical_frames -a age_last_access -l logging_mode"
+#define DEFAULT_ERROR_MESSAGE "Usage: %s tracefile accessfile levels bits -n memory_accesses -f physical_frames -a age_last_access -l logging_mode"
 
 namespace
 {
