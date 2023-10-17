@@ -8,7 +8,7 @@
 
 #include "page_functions.h"
 
-Success assignVPNToFrame(PageNode* pageNode, const unsigned int jumpIndex, const int frame)
+Success assignVPNToFrame(PageNode* pageNode, const uint32_t jumpIndex, const uint32_t frame)
 {
     auto leafNode = (LeafNode*)pageNode;
     leafNode->pageMaps[jumpIndex] = new PageMap;
@@ -17,7 +17,7 @@ Success assignVPNToFrame(PageNode* pageNode, const unsigned int jumpIndex, const
     return true;
 }
 
-PageNode* allocateNextLevel(PageNode* pageNode, const unsigned int jumpIndex)
+PageNode* allocateNextLevel(PageNode* pageNode, const uint32_t jumpIndex)
 {
     auto currentInternalNode = (InternalNode*)pageNode;
     if (currentInternalNode->childNodes[jumpIndex] == nullptr) {
@@ -26,18 +26,18 @@ PageNode* allocateNextLevel(PageNode* pageNode, const unsigned int jumpIndex)
     return currentInternalNode->childNodes[jumpIndex];
 }
 
-const unsigned int getJumpIndex(PageNode* pageNode, const unsigned int vpn)
+const uint32_t getJumpIndex(PageNode* pageNode, const uint32_t vpn)
 {
-    const int nodeDepth = pageNode->nodeDepth;
+    const uint32_t nodeDepth = pageNode->nodeDepth;
     const auto pageTable = pageNode->pageTable;
-    const int mask = pageTable.bitMasks[nodeDepth];
-    const int shift = pageTable.bitShifts[nodeDepth];
+    const uint32_t mask = pageTable.bitMasks[nodeDepth];
+    const uint32_t shift = pageTable.bitShifts[nodeDepth];
     return (vpn & mask) >> shift;
 }
 
-Success insertVpn2PfnMapping(PageNode* pageNode, const unsigned int vpn, const int frame)
+Success insertVpn2PfnMapping(PageNode* pageNode, const uint32_t vpn, const uint32_t frame)
 {
-    const unsigned int jumpIndex = getJumpIndex(pageNode, vpn);
+    const uint32_t jumpIndex = getJumpIndex(pageNode, vpn);
     if (pageNode->nodeDepth == pageNode->pageTable.treeDepth) // -1 To account for Index starting from 0 
     {
         return assignVPNToFrame(pageNode, jumpIndex, frame);   
@@ -46,7 +46,7 @@ Success insertVpn2PfnMapping(PageNode* pageNode, const unsigned int vpn, const i
     return insertVpn2PfnMapping(internalNode, vpn, frame);
 }
 
-Success insertVpn2PfnMapping(PageTable* pageTable, const unsigned int vpn, const int frame)
+Success insertVpn2PfnMapping(PageTable* pageTable, const uint32_t vpn, const uint32_t frame)
 {
     return insertVpn2PfnMapping(pageTable->level_zero, vpn, frame);
 }

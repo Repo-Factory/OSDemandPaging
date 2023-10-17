@@ -6,7 +6,10 @@ get_filename_component(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}" DIRECTORY)
 # find_library(LIBRARY library)
 SET(CMAKE_CXX_FLAGS_DEBUG "-g")
 SET(CMAKE_CXX_FLAGS "-g")
-file(GLOB SOURCES src/*.cpp)
+file(GLOB SOURCES 
+    ${SRC_DIR}/page_replacement/src/*.cpp
+    ${SRC_DIR}/page_table/src/*.cpp
+)
 include_directories(include
     ${SRC_DIR}/page_table/include
 )

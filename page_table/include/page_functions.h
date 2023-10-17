@@ -5,11 +5,9 @@
 
 using Success = bool;
 
-const unsigned int getVPNFromVirtualAddress(const unsigned int virtualAddress, const unsigned int mask, const unsigned int shift);
-Success assignVPNToFrame(PageNode* pageNode, const unsigned int jumpIndex, const int frame);
-PageNode* allocateNextLevel(PageNode* pageNode, const unsigned int jumpIndex);
-const unsigned int getJumpIndex(PageNode* pageNode, const unsigned int vpn);
-Success insertVpn2PfnMapping(PageNode* pageNode, const unsigned int vpn, const int frame);
-Success insertVpn2PfnMapping(PageTable* pageTable, const unsigned int vpn, const int frame);
+const uint32_t getVPNFromVirtualAddress(const uint32_t virtualAddress, const uint32_t mask, const uint32_t shift);
+const uint32_t getJumpIndex(PageNode* pageNode, const uint32_t vpn);
+Success insertVpn2PfnMapping(PageNode* pageNode, const uint32_t vpn, const uint32_t frame);
+Success insertVpn2PfnMapping(PageTable* pageTable, const uint32_t vpn, const uint32_t frame);
 
 #endif

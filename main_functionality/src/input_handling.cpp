@@ -45,27 +45,3 @@ void FileHandler::forEachLineOfFiles(const std::string& file1, const std::string
     stream1.close();
     stream2.close();
 }
-
-/* Count number of lines in file */
-int FileHandler::getLineCount(const std::string& filename)
-{
-    std::ifstream stream = openFile(filename);
-    std::string line;
-    int lineCount=0;
-    while (std::getline(stream, line))
-        lineCount++;    
-    stream.close();
-    return lineCount;
-}
-
-/* Count number of characters in file */
-int FileHandler::getLetterCount(const std::string& filename)
-{
-    std::ifstream stream = openFile(filename);
-    char letter;
-    int letterCount=0;
-    while (stream.get(letter))
-        letterCount++;
-    stream.close();
-    return letterCount;
-}

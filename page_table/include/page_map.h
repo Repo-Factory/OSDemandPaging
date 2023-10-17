@@ -6,11 +6,8 @@
 
 ///// Forward Declarations /////
 struct PageTable; 
-
 struct PageNode; 
-
 struct InternalNode;
-
 struct LeafNode;
 //////////////////////////////////
 
@@ -25,8 +22,7 @@ struct PageMap
  * We'll use a recursive approach and enter the recursion stack with an overloaded proxy
  */
 
-PageMap* findVpn2PfnMapping(PageTable* pageTable, unsigned int vpn);
-
-PageMap* findVpn2PfnMapping(PageNode* pageNode, unsigned int vpn);
+PageMap* findVpn2PfnMapping(PageTable* pageTable, const uint32_t vpn);
+PageMap* findVpn2PfnMapping(PageNode* pageNode, const uint32_t vpn);
 
 #endif

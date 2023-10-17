@@ -7,7 +7,7 @@
 
 #define BIT 1
 
-constexpr int TWO_TO_POWER_OF(const int X)
+constexpr int TWO_TO_POWER_OF(const uint32_t X)
 {
     return BIT << X; // Bit shift to replicate 2^X
 }
@@ -16,7 +16,7 @@ struct PageTable;  // Forward Declaration
 
 struct PageNode
 {
-    PageNode(const PageTable& pageTable, const int bitsPerLevel) 
+    PageNode(const PageTable& pageTable, const uint32_t bitsPerLevel) 
         : pageTable{pageTable} 
     {}
     const PageTable& pageTable;
@@ -25,7 +25,7 @@ struct PageNode
 
 struct InternalNode : public PageNode
 {
-    InternalNode(const PageTable& pageTable, const int bitsPerLevel) : 
+    InternalNode(const PageTable& pageTable, const uint32_t bitsPerLevel) : 
         childNodes(TWO_TO_POWER_OF(bitsPerLevel)),  // Init vectors to appropriate size
         PageNode(pageTable, bitsPerLevel)           // Inherit from parent node
     {}
@@ -34,15 +34,15 @@ struct InternalNode : public PageNode
 
 struct LeafNode : public PageNode
 {
-    LeafNode(const PageTable& pageTable, const int bitsPerLevel) : 
+    LeafNode(const PageTable& pageTable, const uint32_t bitsPerLevel) : 
         pageMaps(TWO_TO_POWER_OF(bitsPerLevel)),    // Init vectors to appropriate size
         PageNode(pageTable, bitsPerLevel)           // Inherit from parent node
     {}
     std::vector<PageMap*> pageMaps; 
 };
 
-InternalNode* allocateInternalNode(const PageTable& pageTable, const int nodeDepth, const int bitsPerLevel);
-LeafNode* allocateLeafNode(const PageTable& pageTable, const int nodeDepth, const int bitsPerLevel);
-PageNode* allocateNode(const PageTable& pageTable, const int nodeDepth, const int bitsPerLevel);
+InternalNode* allocateInternalNode(const PageTable& pageTable, const uint32_t nodeDepth, const uint32_t bitsPerLevel);
+LeafNode* allocateLeafNode(const PageTable& pageTable, const uint32_t nodeDepth, const uint32_t bitsPerLevel);
+PageNode* allocateNode(const PageTable& pageTable, const uint32_t nodeDepth, const uint32_t bitsPerLevel);
 
 #endif

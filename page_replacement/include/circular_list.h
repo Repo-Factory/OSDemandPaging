@@ -2,7 +2,7 @@
 #define CIRCULAR_LIST_H
 
 #include <stdlib.h>
-#include <array>
+#include <vector>
 #include <cstddef>
 #include <chrono>
 
@@ -19,13 +19,15 @@ struct Entry
     bool dirty = false;
 };
 
-template<size_t Capacity>
 struct Ring
 {
+    Ring(const int capacity) 
+        : entries(capacity) 
+    {}
     int current_index = 0;
     std::time_t elapsed_time = 0;
-    size_t capacity = Capacity;
-    std::array<Entry, Capacity> entries;
+    size_t capacity = capacity;
+    std::vector<Entry> entries;
 };
 
 #endif

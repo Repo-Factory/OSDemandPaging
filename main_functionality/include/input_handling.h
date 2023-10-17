@@ -11,8 +11,6 @@ using TwoLineFunction = const std::function<void(std::string&, std::string&)>;
 namespace FileHandler
 {
     void forEachLineOfFiles(const std::string& file1, const std::string& file2, TwoLineFunction performOperation);
-    int getLineCount(const std::string& filename);
-    int getLetterCount(const std::string& filename);
 }
 
 #endif

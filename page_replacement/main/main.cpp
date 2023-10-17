@@ -21,11 +21,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "wsclock_algorithm.h"
+#include "page_node.h"
 
 void testCircularList()
 {
     constexpr const size_t CAPACITY = TWO_TO_POWER_OF(16);
-    Ring<CAPACITY> circularList;
+    Ring circularList(CAPACITY);
     bool allTestsPassed = true;
 
     updatePageList(circularList, 0xFFEEDDCC, Mode::Write);
@@ -75,7 +76,7 @@ void testClockFindPage()
 {
     constexpr const size_t CAPACITY = TWO_TO_POWER_OF(16);
     constexpr const int THRESHOLD   = 3;
-    Ring<CAPACITY> circularList;
+    Ring circularList(CAPACITY);
     bool allTestsPassed = true;
 
     updatePageList(circularList, 0x00000000, Mode::Write);
@@ -85,7 +86,7 @@ void testClockFindPage()
     updatePageList(circularList, 0x00000004, Mode::Write);
     updatePageList(circularList, 0x00000005, Mode::Write);
 
-    int pageIndex = findPage(circularList, THRESHOLD);
+    int pageIndex = findAvailablePage(circularList, THRESHOLD);
 
     if (pageIndex != 6)
     {
@@ -93,7 +94,7 @@ void testClockFindPage()
         allTestsPassed = false;
     }
 
-    pageIndex = findPage(circularList, THRESHOLD);
+    pageIndex = findAvailablePage(circularList, THRESHOLD);
     if (pageIndex != 7)
     {
         printf("find page test failed with value %d, expected %d\n", pageIndex, 1);
