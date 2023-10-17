@@ -8,8 +8,3 @@
 
 #include "wsclock_algorithm.h"
 
-// Does something
-int WsclockAlgorithm(int arg)
-{
-    return arg + NUMERIC_ZERO;
-}

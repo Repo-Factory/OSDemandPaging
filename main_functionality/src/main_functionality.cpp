@@ -8,8 +8,28 @@
 
 #include "main_functionality.h"
 
-// Does something
-int MainFunctionality(int arg)
+Address readAddressFromTraceFile(FILE* traceFile)
 {
-    return arg + NUMERIC_ZERO;
+
 }
+
+AccessMode readAccessMode(FILE* accessFile)
+{
+
+}
+
+void forEachAddress(std::function<void(Address)> performOperations)
+{
+
+}
+
+Address convertStringToAddress(const std::string vpn)
+{
+
+}
+
+Success printAppropriateLogs(const LoggingMode loggingMode)
+{
+
+}
+

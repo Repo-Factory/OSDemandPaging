@@ -4,9 +4,12 @@ project(page_replacement)
 get_filename_component(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}" DIRECTORY)
 
 # find_library(LIBRARY library)
-
+SET(CMAKE_CXX_FLAGS_DEBUG "-g")
+SET(CMAKE_CXX_FLAGS "-g")
 file(GLOB SOURCES src/*.cpp)
-include_directories(include)
+include_directories(include
+    ${SRC_DIR}/page_table/include
+)
 
 add_library(
     ${PROJECT_NAME}

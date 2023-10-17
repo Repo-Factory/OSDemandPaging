@@ -21,7 +21,9 @@ template<size_t Levels, int Bits>
 PageNode<Levels, Bits>* allocateNextLevel(PageNode<Levels, Bits>* pageNode, const unsigned int jumpIndex)
 {
     auto currentInternalNode = (InternalNode<Levels, Bits>*)pageNode;
-    currentInternalNode->childNodes[jumpIndex] = allocateNode(pageNode->pageTable, pageNode->nodeDepth+1);
+    if (currentInternalNode->childNodes[jumpIndex] == nullptr) {
+        currentInternalNode->childNodes[jumpIndex] = allocateNode(pageNode->pageTable, pageNode->nodeDepth+1);
+    }
     return currentInternalNode->childNodes[jumpIndex];
 }
 

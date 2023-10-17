@@ -45,7 +45,7 @@ int main(int argc, char **argv)
       AddressDecoder(&trace, stdout);
       i++;
       if ((i % 100000) == 0)
-	fprintf(stderr,"%dK samples processed\r", i/100000);
+	fprintf(stderr,"%ldK samples processed\r", i/100000);
     }
   }	
 

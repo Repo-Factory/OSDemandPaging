@@ -50,68 +50,17 @@ history for potential later page replacement.
 5) Print appropriate logs to the standard output as specified below in “User
 Interface” */
 
-
 #include "main_functionality.h"
 #include "input_handling.h"
 #include "args_handling.h"
-#include "optional.h"
-#include <stdio.h>
-#include <stdint.h>
-#include <functional>
+#include "page_table.h"
 #include <memory>
-
-struct PageTable
-{
-
-};
-
-struct Page
-{
-
-};
-
-struct History
-{
-
-};
-
-using AccessMode = bool;
-using Address = int32_t;
-using VPN = int32_t;
-using PFN = int32_t;
-using Success = bool;
-
-
-Address readAddressFromTraceFile(FILE* traceFile);
-AccessMode readAccessMode(FILE* accessFile);
-void forEachAddress(std::function<void(Address)> performOperations);
-PFN translateVPN(const std::string vpn);
-Address convertStringToAddress(const std::string vpn);
-VPN extractVPN(const Address virtualAddress);
-Optional<PFN> mapToPFN(const VPN virtualAddress);
-Success insertPage(PageTable pageTable, const Page page);
-Success replacePage(PageTable pageTable, const Page page);
-Success updateHistory(History& history);
-Success printAppropriateLogs(const LoggingMode loggingMode);
-
-PFN handleNoMapping(const VPN vpn);
-
-
-PFN translateVPN(const std::string vpn)
-{
-    const VPN virtualAddress = extractVPN(convertStringToAddress(vpn));
-    const Optional<PFN> physicalAddress = mapToPFN(virtualAddress);
-    return physicalAddress.has_value() ? physicalAddress.getValue() : handleNoMapping(virtualAddress); 
-}
 
 int main(int argc, char* argv[])
 {
     const Args args = ArgsHandling::processArgs(argc, argv);
-    const auto pageTable = std::unique_ptr<PageTable>(new PageTable);
-    const auto history = std::unique_ptr<History>(new History);
     FileHandler::forEachLineOfFile(ArgsHandling::getTraceFilePath(argv), [&](const std::string virtualAddress){
-        const PFN pfn = translateVPN(virtualAddress);
-        const Success status = updateHistory(*history);
+
         printAppropriateLogs(args.optionalArgs.l_flag);
     });
 }

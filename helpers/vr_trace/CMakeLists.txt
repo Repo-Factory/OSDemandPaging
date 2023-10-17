@@ -16,16 +16,11 @@ add_library(
 
 add_executable(
     ${PROJECT_NAME}_exec
-    main/main.cpp
+    main/main.c
 )
 
 target_link_libraries(
-    ${PROJECT_NAME} PRIVATE 
-    # ${LIBRARY}
-)
-
-target_link_libraries(
-    ${PROJECT_NAME}_exec PRIVATE 
+    ${PROJECT_NAME}_exec PUBLIC 
     ${PROJECT_NAME}
 )
 
