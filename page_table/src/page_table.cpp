@@ -16,4 +16,43 @@ const unsigned int getVPNFromVirtualAddress(const unsigned int virtualAddress, c
     return (virtualAddress & mask) >> shift;
 }
 
+std::vector<int> populateBitmasks(std::vector<int>& bitmasks, const int bitsPerLevel)
+{
+    int current_bit = INSTRUCTION_SIZE;
+    for (int& bitmask : bitmasks)
+    {
+        bitmask = XONES(bitsPerLevel) << (current_bit-=bitsPerLevel);
+    }
+    return bitmasks;
+}
+
+std::vector<int> populateBitShifts(std::vector<int>& bitShifts, const int bitsPerLevel)
+{
+    int current_bit = INSTRUCTION_SIZE;
+    for (int& bitShift : bitShifts)
+    {
+        bitShift = current_bit-=bitsPerLevel;
+    }
+    return bitShifts;
+}
+
+std::vector<int> populateEntryCount(std::vector<int>& entryCounts, const int bitsPerLevel)
+{
+    int current_bit = INSTRUCTION_SIZE;
+    for (int& entryCount : entryCounts)
+    {
+        entryCount = TWO_TO_POWER_OF(bitsPerLevel);
+    }
+    return entryCounts;
+}
+
+PageTable createPageTable(const int treeDepth, const int bitsPerLevel)
+{
+    PageTable pageTable(treeDepth);
+    pageTable.level_zero            = allocateNode(pageTable, LEVEL_ZERO, bitsPerLevel);
+    pageTable.bitMasks              = populateBitmasks(pageTable.bitMasks, bitsPerLevel);
+    pageTable.bitShifts             = populateBitShifts(pageTable.bitShifts, bitsPerLevel);
+    pageTable.entryCounts           = populateEntryCount(pageTable.entryCounts, bitsPerLevel);
+    return                          pageTable;
+}
 

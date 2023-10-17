@@ -24,7 +24,7 @@ void testPageTable()
 {
     constexpr const int LEVELS = 3;
     constexpr const int BITS = 8;
-    PageTable<LEVELS, BITS> pageTable = createPageTable<LEVELS, BITS>(LEVELS, BITS);
+    PageTable pageTable = createPageTable(LEVELS, BITS);
     
     bool allTestsPassed = true;
 
