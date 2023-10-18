@@ -39,11 +39,12 @@ namespace
 {
     const std::map<std::string, LoggingMode> loggingModes
     {
-        {"bitmasks",  LoggingMode::bitmasks},              
-        {"va2pa",     LoggingMode::va2pa},                
-        {"vpns_pfn",  LoggingMode::vpns_pfn},             
-        {"offset",    LoggingMode::offset},               
-        {"summary",   LoggingMode::summary},              
+        {"bitmasks",     LoggingMode::bitmasks},              
+        {"va2pa",        LoggingMode::va2pa},                
+        {"vpns_pfn",     LoggingMode::vpns_pfn},
+        {"vpns2pfn_ptr", LoggingMode::vpns2pfn_ptr},             
+        {"offset",       LoggingMode::offset},               
+        {"summary",      LoggingMode::summary},              
     };
 
     LoggingMode getLoggingMode(const char* loggingMode)

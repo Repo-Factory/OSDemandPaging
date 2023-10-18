@@ -1,3 +1,5 @@
+#ifndef TRACE_H
+#define TRACE_H
 
 /* C and C++ define some of their types in different places.
  * Check and see if we are using C or C++ and include appropriately
@@ -56,4 +58,4 @@ void AddressDecoder(p2AddrTr *addr_ptr, FILE *out);
 #define STOPCLKACK		0x36	// acknowledge stop clock
 #define SMIACK			0x37	// acknowledge SMI mode
 						
-
+#endif

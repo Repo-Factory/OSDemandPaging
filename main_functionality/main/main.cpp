@@ -12,113 +12,73 @@
  * 
  ******************************************************************************/
 
-#include "args_handling.h"
-#include "page_table.h"
+#include "main_functionality.h"
 #include "page_functions.h"
-#include "vaddr_tracereader.h"
-#include "wsclock_algorithm.h"
 #include "log_helpers.h"
-#include <functional>
-    #include <iostream>
 
-#define READ_MODE "r"
+// uint32_t traverseLevelForStatistics(const PageNode* pageNode, uint32_t& totalBytes)
+// {
+//     if (pageNode->nodeDepth == pageNode->pageTable.+1) // -1 To account for Index starting from 0 
+//     {
+//         auto currentNode = (LeafNode*)pageNode;
+//         return totalBytes + 
+//     }
+//     auto currentNode = (InternalNode*)pageNode;
+//     return currentNode->childNodes
+// }
 
-uint32_t addFrameAndOffset(const uint32_t frame, const uint32_t offset, const uint32_t offsetBits)
+// uint32_t traverseTreeForStatistics(const PageTable& pageTable)
+// {
+//     uint32_t totalBytes=0;
+//     traverseLevelForStatistics(pageTable.level_zero, totalBytes);
+// }
+
+std::vector<uint32_t> getVpnAtEachLevel(const uint32_t vpn, const PageTable& pageTable)
 {
-    return ((frame << offsetBits) + offset);
-}
-
-int replacePageIfNecessary(PageTable& pageTable, Ring& circularList, const unsigned int virtualAddress, const int threshold)
-{
-    int index = findAvailablePage(circularList, threshold);
-    if (circularList.current_index == circularList.capacity) {
-        pageReplaceClock(circularList, index, virtualAddress);
-        pageReplaceTree(pageTable, virtualAddress);
-    }
-    return index;
-}
-
-void forEachAddress(const Args& args, uint32_t& frame, std::function<void(const uint32_t, const uint32_t)> performOperations)
-{
-    int programCounter =              0;
-    FILE* traceFile =                 fopen(args.mandatoryArgs.traceFile, READ_MODE);
-    FILE* accessFile =                fopen(args.mandatoryArgs.accessFile, READ_MODE);
-    p2AddrTr mtrace;
-    char accessBit;
-    while (!(feof(traceFile) || feof(accessFile)))
+    std::vector<uint32_t> vpnAtEachLevel;
+    for (int i = 0; i < pageTable.treeDepth+1; i++)
     {
-        if (programCounter++ == args.optionalArgs.n_flag) break; //args.optionalArgs.n_flag
-        NextAddress(traceFile, &mtrace);
-        fread(&accessBit, sizeof(char), 1, accessFile);
-        performOperations(mtrace.addr, atoi(&accessBit));
+        vpnAtEachLevel.push_back(((vpn & pageTable.bitMasks[i]) >> pageTable.bitShifts[i]));
     }
-}
-
-void exitIfBitMaskFlag(const Args& args, PageTable& pageTable)
-{
-    if (args.optionalArgs.l_flag == LoggingMode::bitmasks) {
-        log_bitmasks(pageTable.bitMasks.size(), pageTable.bitMasks.data());
-        exit(EXIT_SUCCESS);
-    }
+    return vpnAtEachLevel;
 }
 
 int main(int argc, char* argv[])
 {
     const Args args =                 ArgsHandling::processArgs(argc, argv);
     PageTable pageTable =             createPageTable(args.mandatoryArgs.levelBits);
-    exitIfBitMaskFlag(args, pageTable);
-    
-    
+    exitIfBitMaskFlag                 (args, pageTable);
     Ring circularList                 (args.optionalArgs.f_flag);
-    uint32_t seqFrame                 = 0;    
+    uint32_t frameNumber              = 0;    
 
-    forEachAddress(args, seqFrame, [&](const uint32_t vAddr, const uint32_t accessMode) {
-        seqFrame += insertVpn2PfnMapping(&pageTable, vAddr, seqFrame);
-       
+    const uint32_t AddressesProcessed = forEachAddress(args, frameNumber, [&](const uint32_t vAddr, const uint32_t accessMode) {
+        frameNumber += insertVpn2PfnMapping(&pageTable, vAddr, frameNumber);
+        updatePageList(circularList, vAddr, (Mode)accessMode);
+        const int index = replacePageIfNecessary(pageTable, circularList, vAddr, args.optionalArgs.a_flag);
+        
+        const uint32_t frame = findVpn2PfnMapping(&pageTable, vAddr)->frame_number;
+        const uint32_t offset = vAddr & XONES(pageTable.offsetBits);
+        const uint32_t pfn = addFrameAndOffset(frame, offset, pageTable.offsetBits); 
+        const bool hit = findVpn2PfnMapping(&pageTable, vAddr) != nullptr;
+
         switch(args.optionalArgs.l_flag)
         {
-            case LoggingMode::bitmasks:
-                log_bitmasks(pageTable.bitMasks.size(), pageTable.bitMasks.data());
-                break;
             case LoggingMode::va2pa:
-                log_va2pa(vAddr, addFrameAndOffset(findVpn2PfnMapping(&pageTable, vAddr)->frame_number, (vAddr & XONES(pageTable.offsetBits)), pageTable.offsetBits));
+                log_va2pa(vAddr, pfn);
                 break;
             case LoggingMode::vpns_pfn:
-                // log_vpns_pfn(pageTable.bitMasks.size(), , seqFrame);
+                log_vpns_pfn(pageTable.treeDepth+1, getVpnAtEachLevel(vAddr, pageTable).data(), frame);
                 break;
-            // case LoggingMode::offset:
-            //     log_mapping(vAddr, addFrameAndOffset(findVpn2PfnMapping(&pageTable, vAddr)->frame_number, vAddr & offsetBits, offsetBits)), 
-            //     index, findVpn2PfnMapping(&pageTable, vAddr) != nullptr);
-            //     break; 
-        }
-
-        // updatePageList(circularList, vAddr, (Mode)accessMode);
-        // const int index = replacePageIfNecessary(pageTable, circularList, vAddr, args.optionalArgs.a_flag);
-        
-    });
-}
-
-/* addFrameAndOffset(frame, vpn & offsetBits, offsetBits); */
-/* printf("%x, %d\n", vAddr, accessMode);
-        seqFrame++; */
-
-
-/* switch(args.optionalArgs.l_flag)
-        {
-            case LoggingMode::bitmasks:
-                log_bitmasks(args.mandatoryArgs.levelBits, pageTable.bitMasks.data());
-                break;
-            case LoggingMode::va2pa:
-                log_va2pa(virtualAddress, findVpn2PfnMapping(&pageTable, virtualAddress))>frame_number);
-                break;
-            case LoggingMode::vpns_pfn:
-                // log_vpns_pfn(args.mandatoryArgs.levelBits, pageTable., sequentialFrameNumber);
+            case LoggingMode::vpns2pfn_ptr:
+                log_mapping(vAddr, offset, index, index==-1);
                 break;
             case LoggingMode::offset:
-                // log_mapping(virtualAddress, findVpn2PfnMapping(&pageTable, virtualAddress))>frame_number, 
-                // index, );
-                break;        
-            case LoggingMode::summary:
-                // log_summary(args.mandatoryArgs.totalBits, );
-                break;
-        }; */
+                print_num_inHex(offset);
+                break; 
+        }
+    });
+
+    if (args.optionalArgs.l_flag == LoggingMode::summary) {
+        log_summary(TWO_TO_POWER_OF(pageTable.offsetBits), 0, frameNumber, AddressesProcessed, frameNumber, sizeof(pageTable));
+    }
+}

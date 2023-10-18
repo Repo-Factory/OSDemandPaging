@@ -38,6 +38,7 @@ add_executable(
     page_replacement/src/wsclock_algorithm.cpp
     helpers/logging/src/log_helpers.cpp
     helpers/vr_trace/src/vaddr_tracereader.cpp
+    main_functionality/src/main_functionality.cpp
     main_functionality/main/main.cpp
 )
 
