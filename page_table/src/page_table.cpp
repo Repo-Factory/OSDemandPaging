@@ -56,9 +56,3 @@ PageTable createPageTable(const std::vector<uint32_t> treeLevels)
     pageTable.level_zero            = allocateNode(pageTable, LEVEL_ZERO);
     return                          pageTable;
 }
-
-/*  32 bit address                      32-bits bits for levels  |  Bits Offset       */
-
-/* Later use offset FrameNumber append Offset */
-
-/* frame << (offset bits) + offset  */

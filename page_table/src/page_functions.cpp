@@ -11,10 +11,13 @@
 Success assignVPNToFrame(PageNode* pageNode, const uint32_t jumpIndex, const uint32_t frame)
 {
     auto leafNode = (LeafNode*)pageNode;
-    leafNode->pageMaps[jumpIndex] = new PageMap;
-    leafNode->pageMaps[jumpIndex]->frame_number = frame;
-    leafNode->pageMaps[jumpIndex]->valid = true;
-    return true;
+    if (leafNode->pageMaps[jumpIndex] == nullptr) {
+        leafNode->pageMaps[jumpIndex] = new PageMap;
+        leafNode->pageMaps[jumpIndex]->frame_number = frame;
+        leafNode->pageMaps[jumpIndex]->valid = true;
+        return true;
+    }
+    return false;
 }
 
 PageNode* allocateNextLevel(PageNode* pageNode, const uint32_t jumpIndex)

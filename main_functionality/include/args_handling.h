@@ -41,8 +41,8 @@ struct OptionalArgs
 
 struct Args
 {   
-    MandatoryArgs mandatoryArgs;
     OptionalArgs optionalArgs;
+    MandatoryArgs mandatoryArgs;
 };
 
 namespace ArgsHandling

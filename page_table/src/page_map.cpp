@@ -22,7 +22,8 @@ PageMap* findVpn2PfnMapping(PageNode* pageNode, const uint32_t vpn)
     if (pageNode->nodeDepth == pageNode->pageTable.treeDepth)
     {
         auto currentNode = (LeafNode*)pageNode;
-        return currentNode->pageMaps[jumpIndex];  
+        const uint32_t offsetBits = pageNode->pageTable.offsetBits;
+        return currentNode->pageMaps[jumpIndex];
     }
     auto currentNode = (InternalNode*)pageNode;
     return findVpn2PfnMapping(currentNode->childNodes[jumpIndex], vpn);

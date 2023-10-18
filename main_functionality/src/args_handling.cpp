@@ -22,7 +22,7 @@
 
 #define NUM_MANDATORY_ARGS 3
 #define INVALID -1
-#define FLAG_OPTIONS "n:f:a:l"
+#define FLAG_OPTIONS "n:f:a:l:"
 #define N_FLAG_IDENTIFER 'n'
 #define F_FLAG_IDENTIFER 'f'
 #define A_FLAG_IDENTIFER 'a'
@@ -37,7 +37,7 @@
 
 namespace
 {
-    const std::map<const char*, LoggingMode> loggingModes
+    const std::map<std::string, LoggingMode> loggingModes
     {
         {"bitmasks",  LoggingMode::bitmasks},              
         {"va2pa",     LoggingMode::va2pa},                
@@ -48,7 +48,7 @@ namespace
 
     LoggingMode getLoggingMode(const char* loggingMode)
     {
-        auto it = loggingModes.find(optarg);
+        auto it = loggingModes.find(std::string(loggingMode));
         if (it != loggingModes.end()) {
             return it->second;
         } else {
@@ -129,6 +129,7 @@ namespace
                     break;
                 case L_FLAG_IDENTIFER:
                     optionalArgs.l_flag = getLoggingMode(optarg);
+                    break;
                 default:
                     printDefaultError(argv);
             }
@@ -139,5 +140,5 @@ namespace
 
 Args ArgsHandling::processArgs(int argc, char* argv[])
 {
-    return Args{getMandatoryArgs(argc, argv), getOptionalArgs(argc, argv)};
+    return Args{getOptionalArgs(argc, argv), getMandatoryArgs(argc, argv)};
 }
