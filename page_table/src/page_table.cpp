@@ -5,6 +5,8 @@
  */
 
 #include "page_table.h"
+#include <vector>
+#include <numeric>
 
 /*
  * Given a virtual address, apply the given bit mask and shift right by the given number of
@@ -16,43 +18,47 @@ const uint32_t getVPNFromVirtualAddress(const uint32_t virtualAddress, const uin
     return (virtualAddress & mask) >> shift;
 }
 
-std::vector<uint32_t> populateBitmasks(std::vector<uint32_t>& bitmasks, const uint32_t bitsPerLevel)
+std::vector<uint32_t> populateBitmasks(std::vector<uint32_t>& bitmasks, const std::vector<uint32_t> treeLevels)
 {
     uint32_t current_bit = INSTRUCTION_SIZE;
-    for (uint32_t& bitmask : bitmasks)
+    for (int i = 0; i < bitmasks.size(); i++)
     {
-        bitmask = XONES(bitsPerLevel) << (current_bit-=bitsPerLevel);
+        bitmasks[i] = XONES(treeLevels[i]) << (current_bit-=treeLevels[i]);
     }
     return bitmasks;
 }
 
-std::vector<uint32_t> populateBitShifts(std::vector<uint32_t>& bitShifts, const uint32_t bitsPerLevel)
+std::vector<uint32_t> populateBitShifts(std::vector<uint32_t>& bitShifts, const std::vector<uint32_t> treeLevels)
 {
     uint32_t current_bit = INSTRUCTION_SIZE;
-    for (uint32_t& bitShift : bitShifts)
+    for (int i = 0; i < bitShifts.size(); i++)
     {
-        bitShift = current_bit-=bitsPerLevel;
+        bitShifts[i] = current_bit-=treeLevels[i];
     }
     return bitShifts;
 }
 
-std::vector<uint32_t> populateEntryCount(std::vector<uint32_t>& entryCounts, const uint32_t bitsPerLevel)
+std::vector<uint32_t> populateEntryCount(std::vector<uint32_t>& entryCounts, const std::vector<uint32_t> treeLevels)
 {
-    uint32_t current_bit = INSTRUCTION_SIZE;
-    for (uint32_t& entryCount : entryCounts)
+    for (int i = 0; i < entryCounts.size(); i++)
     {
-        entryCount = TWO_TO_POWER_OF(bitsPerLevel);
+        entryCounts[i] = TWO_TO_POWER_OF(treeLevels[i]);
     }
     return entryCounts;
 }
 
-PageTable createPageTable(const uint32_t treeDepth, const uint32_t bitsPerLevel)
+PageTable createPageTable(const std::vector<uint32_t> treeLevels)
 {
-    PageTable pageTable(treeDepth);
-    pageTable.level_zero            = allocateNode(pageTable, LEVEL_ZERO, bitsPerLevel);
-    pageTable.bitMasks              = populateBitmasks(pageTable.bitMasks, bitsPerLevel);
-    pageTable.bitShifts             = populateBitShifts(pageTable.bitShifts, bitsPerLevel);
-    pageTable.entryCounts           = populateEntryCount(pageTable.entryCounts, bitsPerLevel);
+    PageTable pageTable             (treeLevels);
+    pageTable.bitMasks              = populateBitmasks(pageTable.bitMasks, treeLevels);
+    pageTable.bitShifts             = populateBitShifts(pageTable.bitShifts, treeLevels);
+    pageTable.entryCounts           = populateEntryCount(pageTable.entryCounts, treeLevels);
+    pageTable.level_zero            = allocateNode(pageTable, LEVEL_ZERO);
     return                          pageTable;
 }
 
+/*  32 bit address                      32-bits bits for levels  |  Bits Offset       */
+
+/* Later use offset FrameNumber append Offset */
+
+/* frame << (offset bits) + offset  */

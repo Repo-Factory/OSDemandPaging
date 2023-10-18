@@ -16,7 +16,7 @@ struct PageTable;  // Forward Declaration
 
 struct PageNode
 {
-    PageNode(const PageTable& pageTable, const uint32_t bitsPerLevel) 
+    PageNode(const PageTable& pageTable, const uint32_t bitsAtLevel) 
         : pageTable{pageTable} 
     {}
     const PageTable& pageTable;
@@ -25,24 +25,24 @@ struct PageNode
 
 struct InternalNode : public PageNode
 {
-    InternalNode(const PageTable& pageTable, const uint32_t bitsPerLevel) : 
-        childNodes(TWO_TO_POWER_OF(bitsPerLevel)),  // Init vectors to appropriate size
-        PageNode(pageTable, bitsPerLevel)           // Inherit from parent node
+    InternalNode(const PageTable& pageTable, const uint32_t bitsAtLevel) : 
+        childNodes(bitsAtLevel),  // Init vectors to appropriate size
+        PageNode(pageTable, bitsAtLevel)           // Inherit from parent node
     {}
     std::vector<PageNode*> childNodes;
 };
 
 struct LeafNode : public PageNode
 {
-    LeafNode(const PageTable& pageTable, const uint32_t bitsPerLevel) : 
-        pageMaps(TWO_TO_POWER_OF(bitsPerLevel)),    // Init vectors to appropriate size
-        PageNode(pageTable, bitsPerLevel)           // Inherit from parent node
+    LeafNode(const PageTable& pageTable, const uint32_t bitsAtLevel) : 
+        pageMaps(bitsAtLevel),    // Init vectors to appropriate size
+        PageNode(pageTable, bitsAtLevel)           // Inherit from parent node
     {}
     std::vector<PageMap*> pageMaps; 
 };
 
-InternalNode* allocateInternalNode(const PageTable& pageTable, const uint32_t nodeDepth, const uint32_t bitsPerLevel);
-LeafNode* allocateLeafNode(const PageTable& pageTable, const uint32_t nodeDepth, const uint32_t bitsPerLevel);
-PageNode* allocateNode(const PageTable& pageTable, const uint32_t nodeDepth, const uint32_t bitsPerLevel);
+InternalNode* allocateInternalNode(const PageTable& pageTable, const uint32_t nodeDepth);
+LeafNode* allocateLeafNode(const PageTable& pageTable, const uint32_t nodeDepth);
+PageNode* allocateNode(const PageTable& pageTable, const uint32_t nodeDepth);
 
 #endif

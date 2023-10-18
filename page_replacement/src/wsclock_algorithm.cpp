@@ -22,9 +22,9 @@ namespace
 {
     bool isPageAvailable(const Ring& circularList, const uint32_t clockHand, const uint32_t threshold)
     {
-        auto entry = circularList.entries[clockHand];
-        bool stale = entry.last_access < (circularList.elapsed_time - threshold);
-        bool clean = !entry.dirty;
+        const auto entry = circularList.entries[clockHand];
+        const bool stale = entry.last_access < (circularList.elapsed_time - threshold);
+        const bool clean = !entry.dirty;
         return stale && clean;
     }
 }

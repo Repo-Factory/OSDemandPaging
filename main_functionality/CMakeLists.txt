@@ -5,7 +5,10 @@ get_filename_component(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}" DIRECTORY)
 
 file(GLOB SOURCES 
     ${SRC_DIR}/main_functionality/src/*.cpp
-    ${SRC_DIR}/page_table/src/*.cpp
+    ${SRC_DIR}/page_table/src/page_table.cpp
+    ${SRC_DIR}/page_table/src/page_node.cpp
+    ${SRC_DIR}/page_table/src/page_functions.cpp
+    ${SRC_DIR}/page_table/src/page_map.cpp
     ${SRC_DIR}/page_replacement/src/*.cpp
     ${SRC_DIR}/helpers/logging/src/*.c
     ${SRC_DIR}/helpers/vr_trace/src/*.c

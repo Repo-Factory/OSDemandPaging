@@ -19,12 +19,11 @@
 #include "page_table.h"
 #include "page_functions.h"
 #include <stdio.h>
+#include <vector>
 
 void testPageTable()
 {
-    constexpr const int LEVELS = 3;
-    constexpr const int BITS = 8;
-    PageTable pageTable = createPageTable(LEVELS, BITS);
+    PageTable pageTable = createPageTable(std::vector<uint32_t>{8,8,8});
     
     bool allTestsPassed = true;
 

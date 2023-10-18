@@ -3,8 +3,9 @@
 
 #include <string>
 #include <fstream>
+#include <vector>
 
-#define N_FLAG_DEFAULT 50
+#define N_FLAG_DEFAULT 999999
 #define N_FLAG_MINIMUM 10
 #define F_FLAG_DEFAULT 999999
 #define A_FLAG_DEFAULT 10
@@ -27,8 +28,7 @@ struct MandatoryArgs
 {
     char* traceFile;
     char* accessFile;
-    int levelBits;
-    int totalBits;
+    std::vector<uint32_t> levelBits;
 };
 
 struct OptionalArgs
@@ -48,10 +48,6 @@ struct Args
 namespace ArgsHandling
 {
     Args processArgs(int argc, char* argv[]);
-    const char* getTraceFilePath(char* argv[]);
-    const char* getAccessFilePath(char* argv[]);
 }
-
-std::ostream& operator<<(std::ostream& stream, Args& args);
 
 #endif

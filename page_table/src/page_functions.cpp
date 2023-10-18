@@ -21,7 +21,7 @@ PageNode* allocateNextLevel(PageNode* pageNode, const uint32_t jumpIndex)
 {
     auto currentInternalNode = (InternalNode*)pageNode;
     if (currentInternalNode->childNodes[jumpIndex] == nullptr) {
-        currentInternalNode->childNodes[jumpIndex] = allocateNode(pageNode->pageTable, pageNode->nodeDepth+1, pageNode->pageTable.entryCounts[pageNode->nodeDepth+1]);
+        currentInternalNode->childNodes[jumpIndex] = allocateNode(pageNode->pageTable, pageNode->nodeDepth+1);
     }
     return currentInternalNode->childNodes[jumpIndex];
 }

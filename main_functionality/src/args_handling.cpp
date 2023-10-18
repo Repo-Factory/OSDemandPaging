@@ -20,7 +20,7 @@
 #define ACCESS_FILE_INDEX 2
 #define INIT_LOOP_COUNTER 0
 
-#define NUM_MANDATORY_ARGS 4
+#define NUM_MANDATORY_ARGS 3
 #define INVALID -1
 #define FLAG_OPTIONS "n:f:a:l"
 #define N_FLAG_IDENTIFER 'n'
@@ -33,7 +33,7 @@
 #define INVALID_N_FLAG_ERROR_MESSAGE "Number of memory accesses must be a number, greater than 0"
 #define INVALID_F_FLAG_ERROR_MESSAGE "Number of available frames must be a number, greater than 0"
 #define INVALID_A_FLAG_ERROR_MESSAGE "Age of last access considered recent must be a number, greater than 0"
-#define DEFAULT_ERROR_MESSAGE "Usage: %s tracefile accessfile levels bits -n memory_accesses -f physical_frames -a age_last_access -l logging_mode"
+#define DEFAULT_ERROR_MESSAGE "Usage: %s -n memory_accesses -f physical_frames -a age_last_access -l logging_mode tracefile accessfile [levels_bits] "
 
 namespace
 {
@@ -92,10 +92,19 @@ namespace
 
 namespace
 {
-    MandatoryArgs getMandadtoryArgs(int argc, char* argv[])
+    MandatoryArgs getMandatoryArgs(int argc, char* argv[])
     {
-        if (argc - optind < NUM_MANDATORY_ARGS) printDefaultError(argv);
-        return MandatoryArgs{argv[TRACE_FILE_INDEX], argv[ACCESS_FILE_INDEX]};
+        if (argc - optind < NUM_MANDATORY_ARGS) {
+            printDefaultError(argv);
+        }
+        int idx = optind;
+        char* const trace_file_path = argv[idx++];
+        char* const access_file_path = argv[idx++];
+        std::vector<uint32_t> levels;
+        while (idx < argc) {
+            levels.push_back(std::stoi(argv[idx++])); 
+        }
+        return MandatoryArgs{trace_file_path, access_file_path, levels};
     }
 
     OptionalArgs getOptionalArgs(int argc, char* argv[])
@@ -130,20 +139,5 @@ namespace
 
 Args ArgsHandling::processArgs(int argc, char* argv[])
 {
-    return Args{getMandadtoryArgs(argc, argv), getOptionalArgs(argc, argv)};
-}
-
-const char* ArgsHandling::getTraceFilePath(char* argv[])
-{
-    return argv[TRACE_FILE_INDEX];
-}
-
-const char* ArgsHandling::getAccessFilePath(char* argv[])
-{
-    return argv[ACCESS_FILE_INDEX];
-}
-
-std::ostream& operator<<(std::ostream& stream, Args& args)
-{
-    return stream << args.mandatoryArgs.traceFile << args.mandatoryArgs.accessFile << args.optionalArgs.f_flag << args.optionalArgs.n_flag << args.optionalArgs.a_flag;
+    return Args{getMandatoryArgs(argc, argv), getOptionalArgs(argc, argv)};
 }
