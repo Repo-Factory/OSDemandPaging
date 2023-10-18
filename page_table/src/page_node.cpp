@@ -34,7 +34,7 @@ LeafNode* allocateLeafNode(const PageTable& pageTable, const uint32_t nodeDepth)
 
 PageNode* allocateNode(const PageTable& pageTable, const uint32_t nodeDepth)
 {
-    return nodeDepth == pageTable.treeDepth ? // Is leaf node
+    return nodeDepth == pageTable.treeDepth - 1 ? // Account for index (leaf node of tree with 3 levels will have depth of 2)
     (PageNode*)allocateLeafNode(pageTable, nodeDepth) : 
     (PageNode*)allocateInternalNode(pageTable, nodeDepth);   
 }

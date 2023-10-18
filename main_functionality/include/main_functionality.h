@@ -9,6 +9,7 @@
 
 uint32_t forEachAddress(const Args& args, uint32_t& frame, std::function<void(const uint32_t, const uint32_t)> performOperations);
 uint32_t addFrameAndOffset(const uint32_t frame, const uint32_t offset, const uint32_t offsetBits);
+std::vector<uint32_t> getVpnAtEachLevel(const uint32_t vpn, const PageTable& pageTable);
 int replacePageIfNecessary(PageTable& pageTable, Ring& circularList, const unsigned int virtualAddress, const int threshold);
 void exitIfBitMaskFlag(const Args& args, PageTable& pageTable);
 

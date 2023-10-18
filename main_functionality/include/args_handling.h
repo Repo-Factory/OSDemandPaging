@@ -20,7 +20,7 @@ enum class LoggingMode
     bitmasks            = 0,  
     va2pa               = 1, 
     vpns_pfn            = 2,
-    vpns2pfn_ptr        = 3,
+    vpn2pfn_pr        = 3,
     offset              = 4, 
     summary             = 5, 
 };

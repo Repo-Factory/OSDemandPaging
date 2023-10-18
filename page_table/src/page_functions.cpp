@@ -41,7 +41,7 @@ const uint32_t getJumpIndex(PageNode* pageNode, const uint32_t vpn)
 Success insertVpn2PfnMapping(PageNode* pageNode, const uint32_t vpn, const uint32_t frame)
 {
     const uint32_t jumpIndex = getJumpIndex(pageNode, vpn);
-    if (pageNode->nodeDepth == pageNode->pageTable.treeDepth) // -1 To account for Index starting from 0 
+    if (pageNode->nodeDepth == pageNode->pageTable.treeDepth - 1) // -1 To account for Index starting from 0 
     {
         return assignVPNToFrame(pageNode, jumpIndex, frame);   
     }

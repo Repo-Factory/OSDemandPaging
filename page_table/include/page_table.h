@@ -17,7 +17,7 @@ constexpr const uint32_t INSTRUCTION_SIZE = 32;
 struct PageTable
 {
     PageTable(const std::vector<uint32_t> treeLevels) : 
-        treeDepth{(uint32_t)treeLevels.size()-1}, // Account for indexing (a tree with height 3 will have leaf nodes of depth 2)
+        treeDepth{(uint32_t)treeLevels.size()}, // Account for indexing (a tree with height 3 will have leaf nodes of depth 2)
         offsetBits{INSTRUCTION_SIZE - std::accumulate(treeLevels.begin(), treeLevels.end(), 0)},
         bitMasks(treeLevels.size()),    // Init Vectors to appropriate size
         bitShifts(treeLevels.size()), 

@@ -12,7 +12,7 @@
 
 void updatePageList(Ring& circularList, const uint32_t vpn, const Mode access_type)
 {
-    Entry& entry = circularList.entries[circularList.current_index++];
+    Entry& entry = circularList.entries[circularList.current_index++ % circularList.capacity];
     entry.virtual_address = vpn;
     entry.last_access = circularList.elapsed_time++;
     entry.dirty = static_cast<bool>(access_type);

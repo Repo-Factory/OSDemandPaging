@@ -42,7 +42,7 @@ namespace
         {"bitmasks",     LoggingMode::bitmasks},              
         {"va2pa",        LoggingMode::va2pa},                
         {"vpns_pfn",     LoggingMode::vpns_pfn},
-        {"vpns2pfn_ptr", LoggingMode::vpns2pfn_ptr},             
+        {"vpn2pfn_pr",   LoggingMode::vpn2pfn_pr},             
         {"offset",       LoggingMode::offset},               
         {"summary",      LoggingMode::summary},              
     };

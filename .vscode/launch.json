@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Debug",
             "program": "/home/robox/school/cs480/assignment-three/demand_paging/build/demand_paging_exec",
-            "args": ["-l", "vpns_pfn", "/home/robox/school/cs480/assignment-three/demand_paging/trace.tr", "/home/robox/school/cs480/assignment-three/demand_paging/readswrites.txt", "8", "8", "8"],
+            "args": ["-n", "50", "-f", "20", "-a", "5", "-l", "vpn2pfn_pr", "/home/robox/school/cs480/assignment-three/demand_paging/trace.tr", "/home/robox/school/cs480/assignment-three/demand_paging/readswrites.txt", "4", "6"],
             "cwd": "${workspaceFolder}"
         }
     ]

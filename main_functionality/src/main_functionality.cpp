@@ -13,7 +13,7 @@ uint32_t addFrameAndOffset(const uint32_t frame, const uint32_t offset, const ui
 
 int replacePageIfNecessary(PageTable& pageTable, Ring& circularList, const unsigned int virtualAddress, const int threshold)
 {
-    if (circularList.current_index == circularList.capacity) {
+    if (circularList.current_index > circularList.capacity) {
         const int index = findAvailablePage(circularList, threshold);
         pageReplaceClock(circularList, index, virtualAddress);
         pageReplaceTree(pageTable, virtualAddress);
@@ -34,12 +34,22 @@ uint32_t forEachAddress(const Args& args, uint32_t& frame, std::function<void(co
         if (addressesProcessed == args.optionalArgs.n_flag) {
             break; 
         } addressesProcessed++;
-        
+
         NextAddress(traceFile, &mtrace);
         fread(&accessBit, sizeof(char), 1, accessFile);
         performOperations(mtrace.addr, atoi(&accessBit));
     }
     return addressesProcessed;
+}
+
+std::vector<uint32_t> getVpnAtEachLevel(const uint32_t vpn, const PageTable& pageTable)
+{
+    std::vector<uint32_t> vpnAtEachLevel;
+    for (int i = 0; i < pageTable.treeDepth; i++)
+    {
+        vpnAtEachLevel.push_back(((vpn & pageTable.bitMasks[i]) >> pageTable.bitShifts[i]));
+    }
+    return vpnAtEachLevel;
 }
 
 void exitIfBitMaskFlag(const Args& args, PageTable& pageTable)

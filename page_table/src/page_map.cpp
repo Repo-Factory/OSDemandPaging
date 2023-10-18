@@ -19,7 +19,7 @@ PageMap* findVpn2PfnMapping(PageNode* pageNode, const uint32_t vpn)
 {
     if (pageNode==NULL) return NULL;
     const uint32_t jumpIndex = getJumpIndex(pageNode, vpn);
-    if (pageNode->nodeDepth == pageNode->pageTable.treeDepth)
+    if (pageNode->nodeDepth == pageNode->pageTable.treeDepth - 1)  // -1 To account for Index starting from 0 
     {
         auto currentNode = (LeafNode*)pageNode;
         // const uint32_t offsetBits = pageNode->pageTable.offsetBits;
