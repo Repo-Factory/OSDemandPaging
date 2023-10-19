@@ -18,16 +18,15 @@ void updatePageList(Ring& circularList, const uint32_t vpn, const Mode access_ty
     entry.dirty = static_cast<bool>(access_type);
 }
 
-namespace
+
+bool isPageAvailable(const Ring& circularList, const uint32_t clockHand, const uint32_t threshold)
 {
-    bool isPageAvailable(const Ring& circularList, const uint32_t clockHand, const uint32_t threshold)
-    {
-        const auto entry = circularList.entries[clockHand];
-        const bool stale = entry.last_access < (circularList.elapsed_time - threshold);
-        const bool clean = !entry.dirty;
-        return stale && clean;
-    }
+    const auto entry = circularList.entries[clockHand];
+    const bool stale = entry.last_access < (circularList.elapsed_time - threshold);
+    const bool clean = !entry.dirty;
+    return stale && clean;
 }
+    
 
 uint32_t findAvailablePage(Ring& circularList, const uint32_t threshold)
 {
@@ -47,11 +46,21 @@ void pageReplaceClock(Ring& circularList, const PageIndex index, const uint32_t 
     circularList.entries[index].last_access = circularList.elapsed_time;
 }
 
-void pageReplaceTree(PageTable& pageTable, const uint32_t vpn)
+void pageReplaceTree(PageTable& pageTable, const uint32_t vpnToReplace, const uint32_t replacementVpn)
 {
-    PageMap* pageMap = findVpn2PfnMapping(&pageTable, vpn);
+    PageMap* pageMap = findVpn2PfnMapping(&pageTable, vpnToReplace);
     if (pageMap) {
-        insertVpn2PfnMapping(&pageTable, vpn, pageMap->frame_number);
+        insertVpn2PfnMapping(&pageTable, replacementVpn, pageMap->frame_number);
         pageMap->valid = false;
     }
+}
+
+// Returns vpn of replaced Page
+uint32_t replacePage(PageTable& pageTable, Ring& circularList, const uint32_t virtualAddress, const uint32_t threshold)
+{
+    const PageIndex victimIndex = findAvailablePage(circularList, threshold);
+    const uint32_t vpnOfPage = circularList.entries[victimIndex].virtual_address;
+    pageReplaceClock(circularList, victimIndex, virtualAddress);
+    pageReplaceTree(pageTable, vpnOfPage, virtualAddress);
+    return vpnOfPage;
 }

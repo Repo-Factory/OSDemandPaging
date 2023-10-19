@@ -18,33 +18,57 @@
 
 int main(int argc, char* argv[])
 {
+    /* INIT DATA STRUCTURES */
     const Args args =                 ArgsHandling::processArgs(argc, argv);
     PageTable pageTable =             createPageTable(args.mandatoryArgs.levelBits);
     exitIfBitMaskFlag                 (args, pageTable);
+
+    /////////////////////////////////////////////////////////////
     Ring circularList                 (args.optionalArgs.f_flag);
     uint32_t frameNumber              = 0;    
+    uint32_t hits                     = 0;
+    uint32_t replacements             = 0;
+    /////////////////////////////////////////////////////////////
 
-    const uint32_t AddressesProcessed = forEachAddress(args, frameNumber, [&](const uint32_t vAddr, const uint32_t accessMode) {
+    /* ENTER LOOP FOR EACH ADDRESS */
+    const uint32_t addressesProcessed = forEachAddress(args, [&](const uint32_t vAddr, const uint32_t accessMode) {
         
-        frameNumber += insertVpn2PfnMapping(&pageTable, vAddr, frameNumber);
-        updatePageList(circularList, vAddr, (Mode)accessMode);
-        const int index = replacePageIfNecessary(pageTable, circularList, vAddr, args.optionalArgs.a_flag);
+        const bool hit = findVpn2PfnMapping(&pageTable, vAddr) != nullptr;
+        hits += hit;
+        int vpnReplaced = -1; // No page replacement
+
+        // If hit exists, fall through to rest of functionality
+        if (!hit)
+        {
+            if (args.optionalArgs.f_flag > circularList.current_index)
+            {
+                frameNumber += insertVpn2PfnMapping(&pageTable, vAddr, frameNumber);
+            }
+            else
+            {
+                vpnReplaced = replacePage(pageTable, circularList, vAddr, args.optionalArgs.a_flag);
+                replacements++;
+            }
+        }
+        
+        if (vpnReplaced==-1) updatePageList(circularList, vAddr, (Mode)accessMode);
+
+        /* EXTRACT DATA */
         const uint32_t frame = findVpn2PfnMapping(&pageTable, vAddr)->frame_number;
         const uint32_t offset = vAddr & XONES(pageTable.offsetBits);
         const uint32_t pfn = addFrameAndOffset(frame, offset, pageTable.offsetBits); 
-        const bool hit = findVpn2PfnMapping(&pageTable, vAddr) != nullptr;
-        std::vector vpns = getVpnAtEachLevel(vAddr, pageTable);
 
+        /* LOGGING */
         switch(args.optionalArgs.l_flag)
         {
             case LoggingMode::va2pa:
                 log_va2pa(vAddr, pfn);
                 break;
             case LoggingMode::vpns_pfn:
-                log_vpns_pfn(pageTable.treeDepth, vpns.data(), frame);
+                log_vpns_pfn(pageTable.treeDepth, getVpnAtEachLevel(vAddr, pageTable).data(), frame);
                 break;
             case LoggingMode::vpn2pfn_pr:
-                log_mapping(vAddr, offset, index, index==-1);
+                log_mapping(offset, pfn, vpnReplaced, hit);
                 break;
             case LoggingMode::offset:
                 print_num_inHex(offset);
@@ -53,6 +77,6 @@ int main(int argc, char* argv[])
     });
 
     if (args.optionalArgs.l_flag == LoggingMode::summary) {
-        log_summary(TWO_TO_POWER_OF(pageTable.offsetBits), 0, frameNumber, AddressesProcessed, frameNumber, sizeof(pageTable));
+        log_summary(TWO_TO_POWER_OF(pageTable.offsetBits), replacements, hits, addressesProcessed, frameNumber, sizeof(pageTable));
     }
 }

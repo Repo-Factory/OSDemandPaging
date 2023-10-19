@@ -11,22 +11,11 @@ uint32_t addFrameAndOffset(const uint32_t frame, const uint32_t offset, const ui
     return ((frame << offsetBits) + offset);
 }
 
-int replacePageIfNecessary(PageTable& pageTable, Ring& circularList, const unsigned int virtualAddress, const int threshold)
-{
-    if (circularList.current_index > circularList.capacity) {
-        const int index = findAvailablePage(circularList, threshold);
-        pageReplaceClock(circularList, index, virtualAddress);
-        pageReplaceTree(pageTable, virtualAddress);
-        return index;
-    }
-    return NO_PAGE_HIT;
-}
-
-uint32_t forEachAddress(const Args& args, uint32_t& frame, std::function<void(const uint32_t, const uint32_t)> performOperations)
+uint32_t forEachAddress(const Args& args, std::function<void(const uint32_t, const uint32_t)> performOperations)
 {
     int addressesProcessed =              0;
-    FILE* traceFile =                 fopen(args.mandatoryArgs.traceFile, READ_MODE);
-    FILE* accessFile =                fopen(args.mandatoryArgs.accessFile, READ_MODE);
+    FILE* traceFile =                     fopen(args.mandatoryArgs.traceFile, READ_MODE);
+    FILE* accessFile =                    fopen(args.mandatoryArgs.accessFile, READ_MODE);
     p2AddrTr mtrace;
     char accessBit;
     while (!(feof(traceFile) || feof(accessFile)))
