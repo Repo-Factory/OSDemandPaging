@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
         const uint32_t offset = vAddr & XONES(pageTable.offsetBits);
         const uint32_t pfn = addFrameAndOffset(frame, offset, pageTable.offsetBits); 
 
-        updateAccessHistory(circularList, frame, (Mode)ac cessMode);
+        updateAccessHistory(circularList, frame, (Mode)accessMode);
 
         /* LOGGING */
         switch(args.optionalArgs.l_flag)
