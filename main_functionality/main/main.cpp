@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
             if (args.optionalArgs.f_flag > circularList.current_index)
             {
                 frameNumber += insertVpn2PfnMapping(&pageTable, vAddr, frameNumber);
+                addPageToList(circularList, vAddr);
             }
             else
             {
@@ -51,12 +52,12 @@ int main(int argc, char* argv[])
             }
         }
         
-        if (vpnReplaced==-1) updatePageList(circularList, vAddr, (Mode)accessMode);
-
         /* EXTRACT DATA */
         const uint32_t frame = findVpn2PfnMapping(&pageTable, vAddr)->frame_number;
         const uint32_t offset = vAddr & XONES(pageTable.offsetBits);
         const uint32_t pfn = addFrameAndOffset(frame, offset, pageTable.offsetBits); 
+
+        updateAccessHistory(circularList, frame, (Mode)ac cessMode);
 
         /* LOGGING */
         switch(args.optionalArgs.l_flag)

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(demand_paging)
+project(demandpaging)
 
 SET(CMAKE_CXX_FLAGS_DEBUG "-g")
 SET(CMAKE_CXX_FLAGS "-g")
@@ -13,7 +13,7 @@ include_directories(
 )
 
 add_executable(
-    ${PROJECT_NAME}_exec
+    ${PROJECT_NAME}
     main_functionality/src/args_handling.cpp
     page_table/src/page_table.cpp
     page_table/src/page_node.cpp
@@ -27,11 +27,11 @@ add_executable(
 )
 
 target_link_libraries(
-    ${PROJECT_NAME}_exec PRIVATE 
+    ${PROJECT_NAME} PRIVATE 
 )
 
 install(
-    TARGETS ${PROJECT_NAME}_exec 
+    TARGETS ${PROJECT_NAME} 
     DESTINATION bin/${PROJECT_NAME}
 )
 

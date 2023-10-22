@@ -7,7 +7,8 @@
 
 using PageIndex = uint32_t;
 
-void updatePageList(Ring& circularList, const uint32_t vpn, const Mode access_type);
+void updateAccessHistory(Ring& circularList, const uint32_t frame_number, const Mode access_type);
+void addPageToList(Ring& circularList, const uint32_t vpn);
 uint32_t findAvailablePage(Ring& circularList, const uint32_t threshold);
 void pageReplaceClock(Ring& circularList, const PageIndex index, const uint32_t vpn);
 void pageReplaceTree(PageTable& pageTable, const uint32_t vpnOfPage, const uint32_t vpnToReplace);
