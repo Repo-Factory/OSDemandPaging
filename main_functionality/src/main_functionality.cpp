@@ -18,6 +18,7 @@ uint32_t forEachAddress(const Args& args, std::function<void(const uint32_t, con
     FILE* accessFile =                    fopen(args.mandatoryArgs.accessFile, READ_MODE);
     p2AddrTr mtrace;
     char accessBit;
+    int accessBitInt = 0;
     while (!(feof(traceFile) || feof(accessFile)))
     {
         if (addressesProcessed == args.optionalArgs.n_flag) {
@@ -26,7 +27,11 @@ uint32_t forEachAddress(const Args& args, std::function<void(const uint32_t, con
 
         NextAddress(traceFile, &mtrace);
         fread(&accessBit, sizeof(char), 1, accessFile);
-        performOperations(mtrace.addr, atoi(&accessBit));
+        if (accessBit == '0')
+            accessBitInt = 0;
+        else if ((accessBit == '1'))
+            accessBitInt = 1;
+        performOperations(mtrace.addr, accessBitInt);
     }
     return addressesProcessed;
 }

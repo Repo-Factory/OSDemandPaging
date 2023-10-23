@@ -9,6 +9,7 @@
 #include "wsclock_algorithm.h"
 #include "page_functions.h"
 #include "page_map.h"
+#include <iostream>
 
 void updateAccessHistory(Ring& circularList, const uint32_t frame_number, const Mode access_type)
 {
@@ -16,9 +17,9 @@ void updateAccessHistory(Ring& circularList, const uint32_t frame_number, const 
     circularList.entries[frame_number].dirty = static_cast<bool>(access_type);
 }
 
-void addPageToList(Ring& circularList, const uint32_t vpn)
+void addPageToList(Ring& circularList, const uint32_t vpn, const uint32_t frame)
 { 
-    circularList.entries[circularList.current_index++].virtual_address = vpn; // % circularList.capacity
+    circularList.entries[frame].virtual_address = vpn; // % circularList.capacity
 }
 
 bool isPageAvailable(const Ring& circularList, const uint32_t clockHand, const uint32_t threshold)
@@ -31,20 +32,22 @@ bool isPageAvailable(const Ring& circularList, const uint32_t clockHand, const u
 
 uint32_t findAvailablePage(Ring& circularList, const uint32_t threshold)
 {
-    static int clockHand = 0;       // Icky static but it's very self-contained
+    static int clockHand = 0;       // Icky static but it's self-contained to this function
     do {
         if (isPageAvailable(circularList, clockHand, threshold)) break;
         circularList.entries[clockHand].dirty = false;           // Simulate scheduling
         clockHand = (clockHand + 1) % circularList.capacity;
     } while (true);
-    return clockHand++;
+    const int currentClock = clockHand;
+    clockHand = (clockHand + 1) % circularList.capacity; 
+    return currentClock;
 }
 
-void pageReplaceTree(PageTable& pageTable, const uint32_t vpnToReplace, const uint32_t replacementVpn)
+void pageReplaceTree(PageTable& pageTable, const uint32_t vpnToReplace, const uint32_t replacementVpn, const uint32_t frame)
 {
     PageMap* pageMap = findVpn2PfnMapping(&pageTable, vpnToReplace);
+    insertVpn2PfnMapping(&pageTable, replacementVpn, frame);
     if (pageMap) {
-        insertVpn2PfnMapping(&pageTable, replacementVpn, pageMap->frame_number);
         pageMap->valid = false;
     }
 }
@@ -55,6 +58,6 @@ uint32_t replacePage(PageTable& pageTable, Ring& circularList, const uint32_t vi
     const PageIndex victimIndex = findAvailablePage(circularList, threshold);
     const uint32_t vpnOfPage = circularList.entries[victimIndex].virtual_address;
     circularList.entries[victimIndex].virtual_address = virtualAddress;
-    pageReplaceTree(pageTable, vpnOfPage, virtualAddress);
+    pageReplaceTree(pageTable, vpnOfPage, virtualAddress, victimIndex);
     return vpnOfPage;
 }

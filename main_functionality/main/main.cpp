@@ -25,14 +25,14 @@ int main(int argc, char* argv[])
 
     /////////////////////////////////////////////////////////////
     Ring circularList                 (args.optionalArgs.f_flag);
-    uint32_t frameNumber              = 0;    
+    uint32_t currentFrame             = 0;    
     uint32_t hits                     = 0;
     uint32_t replacements             = 0;
     /////////////////////////////////////////////////////////////
 
     /* ENTER LOOP FOR EACH ADDRESS */
     const uint32_t addressesProcessed = forEachAddress(args, [&](const uint32_t vAddr, const uint32_t accessMode) {
-        
+
         const bool hit = findVpn2PfnMapping(&pageTable, vAddr) != nullptr;
         hits += hit;
         int vpnReplaced = -1; // No page replacement
@@ -40,10 +40,10 @@ int main(int argc, char* argv[])
         // If hit exists, fall through to rest of functionality
         if (!hit)
         {
-            if (args.optionalArgs.f_flag > circularList.current_index)
+            if (args.optionalArgs.f_flag > currentFrame)
             {
-                frameNumber += insertVpn2PfnMapping(&pageTable, vAddr, frameNumber);
-                addPageToList(circularList, vAddr);
+                addPageToList(circularList, vAddr, currentFrame);
+                currentFrame += insertVpn2PfnMapping(&pageTable, vAddr, currentFrame);
             }
             else
             {
@@ -53,6 +53,8 @@ int main(int argc, char* argv[])
         }
         
         /* EXTRACT DATA */
+        // std::cout << findVpn2PfnMapping(&pageTable, vAddr)->frame_number << " " << currentFrame << " " << counter++ << std::endl; std::cout.flush();
+
         const uint32_t frame = findVpn2PfnMapping(&pageTable, vAddr)->frame_number;
         const uint32_t offset = vAddr & XONES(pageTable.offsetBits);
         const uint32_t pfn = addFrameAndOffset(frame, offset, pageTable.offsetBits); 
@@ -78,6 +80,6 @@ int main(int argc, char* argv[])
     });
 
     if (args.optionalArgs.l_flag == LoggingMode::summary) {
-        log_summary(TWO_TO_POWER_OF(pageTable.offsetBits), replacements, hits, addressesProcessed, frameNumber, sizeof(pageTable));
+        log_summary(TWO_TO_POWER_OF(pageTable.offsetBits), replacements, hits, addressesProcessed, currentFrame, sizeof(pageTable));
     }
 }
