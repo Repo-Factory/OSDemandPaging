@@ -13,6 +13,7 @@ constexpr const uint32_t INSTRUCTION_SIZE = 32;
 #define LEVEL_ZERO 0
 #define BIT 1
 #define XONES(X) ((BIT << X) - 1) // Macro generates a stream of X ones by moving bit over and flipping all bits behind it
+#define XZEROS(X) (XONES(32-X) << (X))
 
 struct PageTable
 {

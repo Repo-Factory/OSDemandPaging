@@ -11,6 +11,11 @@ uint32_t addFrameAndOffset(const uint32_t frame, const uint32_t offset, const ui
     return ((frame << offsetBits) + offset);
 }
 
+uint32_t removeOffset(const uint32_t vAddr, const uint32_t offsetBits)
+{
+    return (vAddr & XZEROS(offsetBits)) >> offsetBits;
+}
+
 uint32_t forEachAddress(const Args& args, std::function<void(const uint32_t, const uint32_t)> performOperations)
 {
     int addressesProcessed =              0;
@@ -19,6 +24,7 @@ uint32_t forEachAddress(const Args& args, std::function<void(const uint32_t, con
     p2AddrTr mtrace;
     char accessBit;
     int accessBitInt = 0;
+    
     while (!(feof(traceFile) || feof(accessFile)))
     {
         if (addressesProcessed == args.optionalArgs.n_flag) {

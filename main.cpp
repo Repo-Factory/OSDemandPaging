@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 
         const bool hit = findVpn2PfnMapping(&pageTable, vAddr) != nullptr;
         hits += hit;
-        int vpnReplaced = -1; // No page replacement
+        int vpnReplaced = -1; // No page replacement assumed
 
         // If hit exists, fall through to rest of functionality
         if (!hit)
@@ -47,13 +47,12 @@ int main(int argc, char* argv[])
             }
             else
             {
-                vpnReplaced = replacePage(pageTable, circularList, vAddr, args.optionalArgs.a_flag);
+                vpnReplaced = removeOffset(replacePage(pageTable, circularList, vAddr, args.optionalArgs.a_flag), pageTable.offsetBits);
                 replacements++;
             }
         }
         
         /* EXTRACT DATA */
-        // std::cout << findVpn2PfnMapping(&pageTable, vAddr)->frame_number << " " << currentFrame << " " << counter++ << std::endl; std::cout.flush();
 
         const uint32_t frame = findVpn2PfnMapping(&pageTable, vAddr)->frame_number;
         const uint32_t offset = vAddr & XONES(pageTable.offsetBits);
@@ -71,7 +70,7 @@ int main(int argc, char* argv[])
                 log_vpns_pfn(pageTable.treeDepth, getVpnAtEachLevel(vAddr, pageTable).data(), frame);
                 break;
             case LoggingMode::vpn2pfn_pr:
-                log_mapping(offset, pfn, vpnReplaced, hit);
+                log_mapping(removeOffset(vAddr, pageTable.offsetBits), frame, vpnReplaced, hit);
                 break;
             case LoggingMode::offset:
                 print_num_inHex(offset);
