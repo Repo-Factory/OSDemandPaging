@@ -1,14 +1,13 @@
 /* 
- * @brief page_functions does something cool
+ * @brief page_functions defines tree insertion methods and helpers
  *
- * more
- * more
- * more
+ * We will traverse the tree recursively, making sure to differentiate between internal nodes and leaf nodes
  */
 
 #include "page_functions.h"
 
-Success assignVPNToFrame(PageNode* pageNode, const uint32_t jumpIndex, const uint32_t frame)
+// This can be seen as leaf node case
+Inserted assignVPNToFrame(PageNode* pageNode, const uint32_t jumpIndex, const uint32_t frame)
 {
     auto leafNode = (LeafNode*)pageNode;
     if (leafNode->pageMaps[jumpIndex] == nullptr) {
@@ -20,6 +19,7 @@ Success assignVPNToFrame(PageNode* pageNode, const uint32_t jumpIndex, const uin
     return false;
 }
 
+// This is the internal node case
 PageNode* allocateNextLevel(PageNode* pageNode, const uint32_t jumpIndex)
 {
     auto currentInternalNode = (InternalNode*)pageNode;
@@ -29,6 +29,7 @@ PageNode* allocateNextLevel(PageNode* pageNode, const uint32_t jumpIndex)
     return currentInternalNode->childNodes[jumpIndex];
 }
 
+// Find next node to go to
 const uint32_t getJumpIndex(PageNode* pageNode, const uint32_t vpn)
 {
     const uint32_t nodeDepth = pageNode->nodeDepth;
@@ -38,7 +39,15 @@ const uint32_t getJumpIndex(PageNode* pageNode, const uint32_t vpn)
     return (vpn & mask) >> shift;
 }
 
-Success insertVpn2PfnMapping(PageNode* pageNode, const uint32_t vpn, const uint32_t frame)
+
+// Entry point to recursion stack for insert function
+Inserted insertVpn2PfnMapping(PageTable* pageTable, const uint32_t vpn, const uint32_t frame)
+{
+    return insertVpn2PfnMapping(pageTable->level_zero, vpn, frame);
+}
+
+// Traverse tree recursively to insert VPN and return if it was inserted (boolean) or not if the page already existed
+Inserted insertVpn2PfnMapping(PageNode* pageNode, const uint32_t vpn, const uint32_t frame)
 {
     const uint32_t jumpIndex = getJumpIndex(pageNode, vpn);
     if (pageNode->nodeDepth == pageNode->pageTable.treeDepth - 1) // -1 To account for Index starting from 0 
@@ -49,9 +58,23 @@ Success insertVpn2PfnMapping(PageNode* pageNode, const uint32_t vpn, const uint3
     return insertVpn2PfnMapping(internalNode, vpn, frame);
 }
 
-Success insertVpn2PfnMapping(PageTable* pageTable, const uint32_t vpn, const uint32_t frame)
+// Entry point to recursion stack for insert function
+PageMap* findVpn2PfnMapping(PageTable* pageTable, const uint32_t vpn)
 {
-    return insertVpn2PfnMapping(pageTable->level_zero, vpn, frame);
+    return findVpn2PfnMapping(pageTable->level_zero, vpn);
 }
 
-
+//Given a page table and a VPN, return the mapping of the VPN to physical frame 
+PageMap* findVpn2PfnMapping(PageNode* pageNode, const uint32_t vpn)
+{
+    if (pageNode==NULL) return NULL;
+    const uint32_t jumpIndex = getJumpIndex(pageNode, vpn);
+    if (pageNode->nodeDepth == pageNode->pageTable.treeDepth - 1)  // -1 To account for Index starting from 0 
+    {
+        auto currentNode = (LeafNode*)pageNode;
+        // const uint32_t offsetBits = pageNode->pageTable.offsetBits;
+        return currentNode->pageMaps[jumpIndex];
+    }
+    auto currentNode = (InternalNode*)pageNode;
+    return findVpn2PfnMapping(currentNode->childNodes[jumpIndex], vpn);
+}

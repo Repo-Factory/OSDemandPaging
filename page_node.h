@@ -1,9 +1,8 @@
 #ifndef PAGE_NODE_H
 #define PAGE_NODE_H
 
-#include "page_map.h"
+#include "page_table.h"
 #include <vector>
-#include <cstddef>
 
 #define BIT 1
 
@@ -13,6 +12,7 @@ constexpr int TWO_TO_POWER_OF(const uint32_t X)
 }
 
 struct PageTable;  // Forward Declaration
+struct PageMap;
 
 struct PageNode
 {

@@ -1,9 +1,8 @@
 /* 
- * @brief page_functions does something cool
+ * @brief Defines Node Allocation for Tree
  *
- * more
- * more
- * more
+ * We will use inheritance to represent our two possible node types. Allocating each will be different as they have different children
+ * (either a list of page maps or a list of more internal nodes)
  */
 
 #include "page_node.h"

@@ -1,14 +1,12 @@
 /* 
- * @brief wsclock_algorithm does something cool
+ * @brief wsclock_algorithm implementation for page replacement
  *
- * more
- * more
- * more
+ * We will keep track of our frames allocated in a circular list. We will use this list to free a page when we encounter a page
+ * fault 
  */
 
 #include "wsclock_algorithm.h"
 #include "page_functions.h"
-#include "page_map.h"
 #include <iostream>
 
 void updateAccessHistory(Ring& circularList, const uint32_t frame_number, const Mode access_type)

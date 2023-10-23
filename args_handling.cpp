@@ -38,7 +38,7 @@
 #define INVALID_A_FLAG_ERROR_MESSAGE "Age of last access considered recent must be a number, greater than 0"
 #define DEFAULT_ERROR_MESSAGE "Usage: %s -n memory_accesses -f physical_frames -a age_last_access -l logging_mode tracefile accessfile [levels_bits] "
 
-namespace
+namespace // This will help us map an argument string to a certain logging mode to be used in main program
 {
     const std::map<std::string, LoggingMode> loggingModes
     {
@@ -61,7 +61,7 @@ namespace
     }
 }
 
-namespace
+namespace // Validation methods will check a condition, if it is not met we will print the appropriate message and exit the program.
 {
     void validate_nFlag(const OptionalArgs& optionalArgs)
     {
@@ -89,9 +89,12 @@ namespace
 
     void checkMinimumLevelZero(const std::vector<uint32_t>& levels)
     {
-        if (levels[0] < MINIMUM_LEVEL_BITS) {
-            printf(INVALID_LEVEL_BITS_MESSAGE);
-            exit(EXIT_FAILURE);
+        for (const uint32_t level : levels)
+        {
+            if (levels[0] < MINIMUM_LEVEL_BITS) {
+                printf(INVALID_LEVEL_BITS_MESSAGE);
+                exit(EXIT_FAILURE);
+            }
         }
     }
 

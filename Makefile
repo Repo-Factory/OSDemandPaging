@@ -8,8 +8,8 @@ LDFLAGS=-pthread
 INCLUDE=-I./
 
 # object files
-OBJS = log_helpers.o main.o args_handling.o main_functionality.o page_functions.o page_map.o page_node.o page_table.o vaddr_tracereader.o wsclock_algorithm.o  
-HEADERS = log_helpers.h args_handling.h main_functionality.h page_functions.h page_map.h page_node.h page_table.h vaddr_tracereader.h wsclock_algorithm.h 
+OBJS = log_helpers.o main.o args_handling.o main_functionality.o page_functions.o page_node.o page_table.o vaddr_tracereader.o wsclock_algorithm.o  
+HEADERS = log_helpers.h args_handling.h main_functionality.h page_functions.h page_node.h page_table.h vaddr_tracereader.h wsclock_algorithm.h 
 # Program name
 PROGRAM = demandpaging
 
@@ -34,9 +34,6 @@ main_functionality.o : main_functionality.h main_functionality.cpp
 	
 page_functions.o : page_functions.h page_functions.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDE) page_functions.cpp
-
-page_map.o : page_map.h page_map.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDE) page_map.cpp
 
 page_node.o : page_node.h page_node.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDE) page_node.cpp

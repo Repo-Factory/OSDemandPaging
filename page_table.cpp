@@ -1,7 +1,7 @@
 /* 
- * @brief page_table is a templated class
+ * @brief page_table lays out the creation of a page table
  *
- * See page_table.h for more details
+ * Upon initialization (which will require vector of all page levels), we will initialize all data members using bit manipulations
  */
 
 #include "page_table.h"

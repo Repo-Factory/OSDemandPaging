@@ -1,13 +1,24 @@
 /*******************************************************************************
  * @author Strix Elixel
- * @name main_functionality
+ * @name demandpaging
  * 
- * @brief Reads words from two files passed as cmd line arguments 
+ * @brief Perform virtual page mapping to a physical address with page replacement.
  * 
- * @description 
+ * @description We will use a tree implementation to map virtual addresses taken from a trace file to physical addresses
+ * We will also keep track of read/write accesses and store the appropriate information to provide page replacement when necessary
  * 
- * 
- * 
+ * MainFunctionality
+ *  - Command line args handling
+ *  - Actual file handling, page table utilization, logging
+ * PageTable
+ *  - PageTable Data Structure
+ *  - PageTable Nodes Definitions
+ *  - PageTable Functions (traversal, insertion, search)
+ * WSClock
+ *  - Page Replacement Handling
+ * Helpers
+ *  - Provided logging functions
+ *  - Provided trace file functions
  * See cpp file of each for more details in each respective area
  * 
  ******************************************************************************/

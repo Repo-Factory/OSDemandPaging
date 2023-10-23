@@ -4,21 +4,24 @@
 #include <stdlib.h>
 #include <vector>
 #include <cstddef>
+#include <cstdint>
 #include <vector>
 #include <numeric>
 #include "page_node.h"
-#include "page_map.h"
 
 constexpr const uint32_t INSTRUCTION_SIZE = 32;
 #define LEVEL_ZERO 0
 #define BIT 1
-#define XONES(X) ((BIT << X) - 1) // Macro generates a stream of X ones by moving bit over and flipping all bits behind it
-#define XZEROS(X) (XONES(32-X) << (X))
+#define XONES(X) ((BIT << X) - 1)       // Macro generates a stream of X ones by moving bit over and flipping all bits behind it
+#define XZEROS(X) (XONES(32-X) << (X))  // We will also need to generate a stream of X zeros by shifting a certain number of ones
 
+struct PageNode; // Forward declaration
+
+// With a 32 bit instruction, the number of offset bits will be 32 - the number of bits used for the levels
 struct PageTable
 {
     PageTable(const std::vector<uint32_t> treeLevels) : 
-        treeDepth{(uint32_t)treeLevels.size()}, // Account for indexing (a tree with height 3 will have leaf nodes of depth 2)
+        treeDepth{(uint32_t)treeLevels.size()},
         offsetBits{INSTRUCTION_SIZE - std::accumulate(treeLevels.begin(), treeLevels.end(), 0)},
         bitMasks(treeLevels.size()),    // Init Vectors to appropriate size
         bitShifts(treeLevels.size()), 
