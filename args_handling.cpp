@@ -91,7 +91,7 @@ namespace // Validation methods will check a condition, if it is not met we will
     {
         for (const uint32_t level : levels)
         {
-            if (levels[0] < MINIMUM_LEVEL_BITS) {
+            if (level < MINIMUM_LEVEL_BITS) {
                 printf(INVALID_LEVEL_BITS_MESSAGE);
                 exit(EXIT_FAILURE);
             }

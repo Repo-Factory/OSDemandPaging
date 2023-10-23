@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
     /* ENTER LOOP FOR EACH ADDRESS */
     const uint32_t addressesProcessed = forEachAddress(args, [&](const uint32_t vAddr, const uint32_t accessMode) {
 
-        const bool hit = findVpn2PfnMapping(&pageTable, vAddr) != nullptr;
+        const bool hit = findVpn2PfnMapping(&pageTable, vAddr) != nullptr && findVpn2PfnMapping(&pageTable, vAddr)->valid;
         hits += hit;
         int vpnReplaced = -1; // No page replacement assumed
 

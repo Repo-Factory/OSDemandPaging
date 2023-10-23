@@ -9,10 +9,10 @@
 #include "page_functions.h"
 #include <iostream>
 
-void updateAccessHistory(Ring& circularList, const uint32_t frame_number, const Mode access_type)
+void updateAccessHistory(Ring& circularList, const uint32_t frame, const Mode access_type)
 {
-    circularList.entries[frame_number].last_access = circularList.elapsed_time++;
-    circularList.entries[frame_number].dirty = static_cast<bool>(access_type);
+    circularList.entries[frame].last_access = circularList.elapsed_time++;
+    if (access_type == Mode::Write) circularList.entries[frame].dirty = true;
 }
 
 void addPageToList(Ring& circularList, const uint32_t vpn, const uint32_t frame)
@@ -43,11 +43,8 @@ uint32_t findAvailablePage(Ring& circularList, const uint32_t threshold)
 
 void pageReplaceTree(PageTable& pageTable, const uint32_t vpnToReplace, const uint32_t replacementVpn, const uint32_t frame)
 {
-    PageMap* pageMap = findVpn2PfnMapping(&pageTable, vpnToReplace);
     insertVpn2PfnMapping(&pageTable, replacementVpn, frame);
-    if (pageMap) {
-        pageMap->valid = false;
-    }
+    findVpn2PfnMapping(&pageTable, vpnToReplace)->valid = false;
 }
 
 // Returns vpn of replaced Page
@@ -59,3 +56,4 @@ uint32_t replacePage(PageTable& pageTable, Ring& circularList, const uint32_t vi
     pageReplaceTree(pageTable, vpnOfPage, virtualAddress, victimIndex);
     return vpnOfPage;
 }
+

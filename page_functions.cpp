@@ -16,6 +16,8 @@ Inserted assignVPNToFrame(PageNode* pageNode, const uint32_t jumpIndex, const ui
         leafNode->pageMaps[jumpIndex]->valid = true;
         return true;
     }
+    leafNode->pageMaps[jumpIndex]->frame_number = frame;
+    leafNode->pageMaps[jumpIndex]->valid = true;
     return false;
 }
 
@@ -72,7 +74,6 @@ PageMap* findVpn2PfnMapping(PageNode* pageNode, const uint32_t vpn)
     if (pageNode->nodeDepth == pageNode->pageTable.treeDepth - 1)  // -1 To account for Index starting from 0 
     {
         auto currentNode = (LeafNode*)pageNode;
-        // const uint32_t offsetBits = pageNode->pageTable.offsetBits;
         return currentNode->pageMaps[jumpIndex];
     }
     auto currentNode = (InternalNode*)pageNode;

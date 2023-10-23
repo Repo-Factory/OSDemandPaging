@@ -8,8 +8,9 @@
             "type": "lldb",
             "request": "launch",
             "name": "Debug",
-            "program": "/home/robox/school/cs480/assignment-three/demand_paging/build/demandpaging",
-            "args": ["-n", "100000", "-f", "40", "-l", "summary", "/home/robox/school/cs480/assignment-three/demand_paging/trace.tr", "/home/robox/school/cs480/assignment-three/demand_paging/readswrites.txt", "8", "10"], 
+            "program": "/home/robox/school/cs480/assignment-three/turn-in/demandpaging",
+            "args": ["-n", "50", "-f", "20", "-a", "5", "-l", "vpn2pfn_pr", "trace.tr", "readswrites.txt", "4", "6", "8"],
+            //["-n", "100000", "-f", "40", "-l", "summary", "/home/robox/school/cs480/assignment-three/demand_paging/trace.tr", "/home/robox/school/cs480/assignment-three/demand_paging/readswrites.txt", "8", "10"], 
             // ["trace.tr", "readswrites.txt", "4", "8", "8"],
             // ["-n", "50", "-f", "20", "-a", "5", "-l", "vpn2pfn_pr", "/home/robox/school/cs480/assignment-three/demand_paging/trace.tr", "/home/robox/school/cs480/assignment-three/demand_paging/readswrites.txt", "4", "6", "8"],
             "cwd": "${workspaceFolder}"
