@@ -16,6 +16,40 @@ uint32_t removeOffset(const uint32_t vAddr, const uint32_t offsetBits)
     return (vAddr & XZEROS(offsetBits)) >> offsetBits;
 }
 
+const uint32_t convertAccessBit(char accessBit)
+{
+    if (accessBit == '0')
+        return 0;
+    else if (accessBit == '1')
+        return 1;
+}
+
+const uint32_t getTraceEnd(const char* traceFilePath)
+{
+    FILE* traceFile = fopen(traceFilePath, READ_MODE);
+    p2AddrTr mtrace;
+    int eof = 0;
+    while (!(feof(traceFile))) {
+        NextAddress(traceFile, &mtrace);
+        eof++;
+    }
+    fclose(traceFile);
+    return eof-1;
+}
+
+const uint32_t getAccessFileEnd(const char* accessFilePath)
+{
+    FILE* accessFile = fopen(accessFilePath, READ_MODE);
+    char accessBit;
+    int eof = 0;
+    while (!(feof(accessFile))) {
+        fread(&accessBit, sizeof(char), 1, accessFile);
+        eof++;
+    }
+    fclose(accessFile);
+    return eof-1;
+}
+
 uint32_t forEachAddress(const Args& args, std::function<void(const uint32_t, const uint32_t)> performOperations)
 {
     int addressesProcessed =              0;
@@ -23,9 +57,11 @@ uint32_t forEachAddress(const Args& args, std::function<void(const uint32_t, con
     FILE* accessFile =                    fopen(args.mandatoryArgs.accessFile, READ_MODE);
     p2AddrTr mtrace;
     char accessBit;
-    int accessBitInt = 0;
-    
-    while (!(feof(traceFile) || feof(accessFile)))
+
+    const uint32_t traceFileEnd = getTraceEnd(args.mandatoryArgs.traceFile);
+    const uint32_t accessFileEnd = getAccessFileEnd(args.mandatoryArgs.accessFile);
+
+    while ((addressesProcessed < traceFileEnd && addressesProcessed < accessFileEnd))
     {
         if (addressesProcessed == args.optionalArgs.n_flag) {
             break; 
@@ -33,14 +69,17 @@ uint32_t forEachAddress(const Args& args, std::function<void(const uint32_t, con
 
         NextAddress(traceFile, &mtrace);
         fread(&accessBit, sizeof(char), 1, accessFile);
-        if (accessBit == '0')
-            accessBitInt = 0;
-        else if ((accessBit == '1'))
-            accessBitInt = 1;
-        performOperations(mtrace.addr, accessBitInt);
+        
+        performOperations(mtrace.addr, convertAccessBit(accessBit));
     }
     return addressesProcessed;
 }
+
+const uint32_t getSizeOfPageTable(PageTable& pageTable)
+{
+    
+}
+
 
 std::vector<uint32_t> getVpnAtEachLevel(const uint32_t vpn, const PageTable& pageTable)
 {

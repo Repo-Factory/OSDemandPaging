@@ -12,5 +12,6 @@ uint32_t addFrameAndOffset(const uint32_t frame, const uint32_t offset, const ui
 uint32_t removeOffset(const uint32_t vAddr, const uint32_t offsetBits);
 std::vector<uint32_t> getVpnAtEachLevel(const uint32_t vpn, const PageTable& pageTable);
 void exitIfBitMaskFlag(const Args& args, PageTable& pageTable);
+const uint32_t getSizeOfPageTable(PageTable& pageTable);
 
 #endif 

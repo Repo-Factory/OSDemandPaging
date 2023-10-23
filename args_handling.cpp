@@ -103,20 +103,20 @@ namespace
         }
     }
 
-    void printDefaultError(char* argv[])
-    {
-        printf(DEFAULT_ERROR_MESSAGE, argv[0]);
-        exit(EXIT_FAILURE);
-    }
-
     void checkInputFileValidity(char* const file_path)
     {
-        FILE *file = fopen(file_path, READ_MODE); // Replace "example.txt" with the name of the file you want to open
+        FILE *file = fopen(file_path, READ_MODE); 
         if (file == NULL) {
             printf(INVALID_FILE_MESSAGE, file_path);
             exit(EXIT_FAILURE);
         }
         fclose(file);
+    }
+
+    void printDefaultError(char* argv[])
+    {
+        printf(DEFAULT_ERROR_MESSAGE, argv[0]);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -132,7 +132,7 @@ namespace
         char* const trace_file_path = argv[idx++];
         char* const access_file_path = argv[idx++];
         
-        std::vector<uint32_t> levels;
+        std::vector<uint32_t> levels;               // Grab variable number of level bits
         while (idx < argc) {
             levels.push_back(std::stoi(argv[idx++])); 
         }
