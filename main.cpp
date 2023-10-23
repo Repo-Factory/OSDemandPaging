@@ -44,7 +44,8 @@ int main(int argc, char* argv[])
     /* ENTER LOOP FOR EACH ADDRESS */
     const uint32_t addressesProcessed = forEachAddress(args, [&](const uint32_t vAddr, const uint32_t accessMode) {
 
-        const bool hit = findVpn2PfnMapping(&pageTable, vAddr) != nullptr && findVpn2PfnMapping(&pageTable, vAddr)->valid;
+        const PageMap* pageMap = findVpn2PfnMapping(&pageTable, vAddr);
+        const bool hit =  pageMap != nullptr && pageMap->valid;
         hits += hit;
         int vpnReplaced = -1; // No page replacement assumed
 
@@ -64,7 +65,6 @@ int main(int argc, char* argv[])
         }
         
         /* EXTRACT DATA */
-
         const uint32_t frame = findVpn2PfnMapping(&pageTable, vAddr)->frame_number;
         const uint32_t offset = vAddr & XONES(pageTable.offsetBits);
         const uint32_t pfn = addFrameAndOffset(frame, offset, pageTable.offsetBits); 
