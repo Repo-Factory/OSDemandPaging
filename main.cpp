@@ -90,6 +90,6 @@ int main(int argc, char* argv[])
     });
 
     if (args.optionalArgs.l_flag == LoggingMode::summary) {
-        log_summary(TWO_TO_POWER_OF(pageTable.offsetBits), replacements, hits, addressesProcessed, currentFrame, sizeof(pageTable));
+        log_summary(TWO_TO_POWER_OF(pageTable.offsetBits), replacements, hits, addressesProcessed, currentFrame, getSizeOfPageTable(&pageTable));
     }
 }

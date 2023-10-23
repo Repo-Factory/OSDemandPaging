@@ -38,9 +38,38 @@ void exitIfBitMaskFlag(const Args& args, PageTable& pageTable)
     }
 }
 
-const uint32_t getSizeOfPageTable(PageTable& pageTable)
+const uint32_t getSizeOfPageTable(PageTable* pageTable)
 {
-    
+    uint32_t totalBytes = 0;
+    totalBytes += sizeof(pageTable->bitMasks);
+    totalBytes += sizeof(pageTable->bitShifts);
+    totalBytes += sizeof(pageTable->entryCounts);
+    totalBytes += sizeof(pageTable->offsetBits);
+    totalBytes += sizeof(pageTable->treeDepth);
+    totalBytes += sizeof(pageTable->level_zero);
+    getSizeOfPageTable(pageTable->level_zero, totalBytes);
+    return totalBytes;
+}
+
+void getSizeOfPageTable(PageNode* pageNode, uint32_t& totalBytes)
+{   
+    if (pageNode == nullptr) return;
+    totalBytes += sizeof(*pageNode);
+
+    if (pageNode->nodeDepth == pageNode->pageTable.treeDepth - 1)  // -1 To account for Index starting from 0 
+    {
+        auto currentNode = (LeafNode*)pageNode;
+        for (auto node : currentNode->pageMaps) 
+        {
+            totalBytes += sizeof(node);
+        }
+        return;
+    }
+    auto currentNode = (InternalNode*)pageNode;
+    for (auto node : currentNode->childNodes) 
+    {
+        getSizeOfPageTable((PageNode*)node, totalBytes);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
