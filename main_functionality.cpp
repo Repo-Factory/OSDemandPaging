@@ -38,6 +38,7 @@ void exitIfBitMaskFlag(const Args& args, PageTable& pageTable)
     }
 }
 
+// Add all fields of our page table and recurse through nodes to get size of page table in bytes
 const uint32_t getSizeOfPageTable(PageTable* pageTable)
 {
     uint32_t totalBytes = 0;
@@ -51,24 +52,26 @@ const uint32_t getSizeOfPageTable(PageTable* pageTable)
     return totalBytes;
 }
 
+// Recursive function which will take reference to what will eventually be our total, we will go through each node, adding it's
+// size to the total, then recursively call if necessary or simply add all our pagemap sizes.
 void getSizeOfPageTable(PageNode* pageNode, uint32_t& totalBytes)
 {   
-    if (pageNode == nullptr) return;
-    totalBytes += sizeof(*pageNode);
+    if (pageNode == nullptr) return;    
+    totalBytes += sizeof(*pageNode);                               // Current node size
 
-    if (pageNode->nodeDepth == pageNode->pageTable.treeDepth - 1)  // -1 To account for Index starting from 0 
+    if (pageNode->nodeDepth == pageNode->pageTable.treeDepth - 1)  // Leaf node non recursive case
     {
         auto currentNode = (LeafNode*)pageNode;
-        for (auto node : currentNode->pageMaps) 
+        for (auto pageMap : currentNode->pageMaps) 
         {
-            totalBytes += sizeof(node);
+            totalBytes += sizeof(pageMap);
         }
         return;
     }
-    auto currentNode = (InternalNode*)pageNode;
-    for (auto node : currentNode->childNodes) 
+    auto currentNode = (InternalNode*)pageNode;                   // Internal node means we recurse after adding current node size
+    for (auto internalNode : currentNode->childNodes) 
     {
-        getSizeOfPageTable((PageNode*)node, totalBytes);
+        getSizeOfPageTable((PageNode*)internalNode, totalBytes);
     }
 }
 
