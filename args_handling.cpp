@@ -13,6 +13,7 @@
 #include "args_handling.h"
 #include <getopt.h>
 #include <unistd.h>
+#include <numeric>
 #include <iostream>
 #include <map>
 
@@ -22,6 +23,7 @@
 
 #define NUM_MANDATORY_ARGS 3
 #define INVALID -1
+#define READ_MODE "r"
 #define FLAG_OPTIONS "n:f:a:l:"
 #define N_FLAG_IDENTIFER 'n'
 #define F_FLAG_IDENTIFER 'f'
@@ -30,6 +32,7 @@
 #define OUT_OF_RANGE_N_FLAG(n_flag) n_flag<1
 #define OUT_OF_RANGE_F_FLAG(f_flag) f_flag<1 
 #define OUT_OF_RANGE_A_FLAG(a_flag) a_flag<1 
+#define INVALID_FILE_MESSAGE "Unable to open %s"
 #define INVALID_N_FLAG_ERROR_MESSAGE "Number of memory accesses must be a number, greater than 0"
 #define INVALID_F_FLAG_ERROR_MESSAGE "Number of available frames must be a number, greater than 0"
 #define INVALID_A_FLAG_ERROR_MESSAGE "Age of last access considered recent must be a number, greater than 0"
@@ -84,10 +87,36 @@ namespace
         }
     }
 
+    void checkMinimumLevelZero(const std::vector<uint32_t>& levels)
+    {
+        if (levels[0] < MINIMUM_LEVEL_BITS) {
+            printf(INVALID_LEVEL_BITS_MESSAGE);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    void checkMaximumLevelsBits(const std::vector<uint32_t>& levels)
+    {
+        if (std::accumulate(levels.begin(), levels.end(), 0) > MAXIMUM_TOTAL_BITS) {
+            printf(INVALID_TOTAL_BITS_MESSAGE);
+            exit(EXIT_FAILURE);
+        }
+    }
+
     void printDefaultError(char* argv[])
     {
         printf(DEFAULT_ERROR_MESSAGE, argv[0]);
         exit(EXIT_FAILURE);
+    }
+
+    void checkInputFileValidity(char* const file_path)
+    {
+        FILE *file = fopen(file_path, READ_MODE); // Replace "example.txt" with the name of the file you want to open
+        if (file == NULL) {
+            printf(INVALID_FILE_MESSAGE, file_path);
+            exit(EXIT_FAILURE);
+        }
+        fclose(file);
     }
 }
 
@@ -98,13 +127,21 @@ namespace
         if (argc - optind < NUM_MANDATORY_ARGS) {
             printDefaultError(argv);
         }
+
         int idx = optind;
         char* const trace_file_path = argv[idx++];
         char* const access_file_path = argv[idx++];
+        
         std::vector<uint32_t> levels;
         while (idx < argc) {
             levels.push_back(std::stoi(argv[idx++])); 
         }
+
+        checkInputFileValidity(trace_file_path);
+        checkInputFileValidity(access_file_path);
+        checkMinimumLevelZero(levels);
+        checkMaximumLevelsBits(levels);
+
         return MandatoryArgs{trace_file_path, access_file_path, levels};
     }
 
