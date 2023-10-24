@@ -80,7 +80,7 @@ uint32_t processAddress(PageTable& pageTable, Ring& circularList, StatsTracker& 
 }
 
 // Function to handle logging based on the l_flag
-void handleLogging(const LoggingMode loggingMode, const PageTable& pageTable, const uint32_t vAddr, const uint32_t pfn, const uint32_t vpnReplaced, const bool hit) 
+void handleLogging(const LoggingMode loggingMode, const PageTable& pageTable, const uint32_t vAddr, const uint32_t frame, const uint32_t pfn, const uint32_t vpnReplaced, const bool hit) 
 {
     switch (loggingMode) 
     {
@@ -88,7 +88,7 @@ void handleLogging(const LoggingMode loggingMode, const PageTable& pageTable, co
             log_va2pa(vAddr, pfn);
             break;
         case LoggingMode::vpns_pfn:
-            log_vpns_pfn(pageTable.treeDepth, getVpnAtEachLevel(vAddr, pageTable).data(), pfn);
+            log_vpns_pfn(pageTable.treeDepth, getVpnAtEachLevel(vAddr, pageTable).data(), frame);
             break;
         case LoggingMode::vpn2pfn_pr:
             log_mapping(getVPNFromVirtualAddress(vAddr, XZEROS(pageTable.offsetBits), pageTable.offsetBits), pfn, vpnReplaced, hit);
@@ -112,8 +112,10 @@ int main(int argc, char* argv[])
     exitIfBitMaskFlag(args, pageTable);
     const uint32_t addressesProcessed = forEachAddress(args, [&](const uint32_t vAddr, const uint32_t accessMode) {
         const uint32_t vpnReplaced = processAddress(pageTable, circularList, statsTracker, vAddr);
-        updateAccessHistory(circularList, getFrame(pageTable, vAddr), static_cast<Mode>(accessMode));
-        handleLogging(loggingMode, pageTable, vAddr, getFrame(pageTable, vAddr), vpnReplaced, vpnReplaced != NO_REPLACEMENT);
+        const uint32_t frame = getFrame(pageTable, vAddr);
+        updateAccessHistory(circularList, frame, static_cast<Mode>(accessMode));
+        const uint32_t pfn = addFrameAndOffset(frame, vAddr & XONES(pageTable.offsetBits), pageTable.offsetBits); 
+        handleLogging(loggingMode, pageTable, vAddr, frame, pfn, vpnReplaced, vpnReplaced != NO_REPLACEMENT);
     });
     
     /* END PROGRAM */
