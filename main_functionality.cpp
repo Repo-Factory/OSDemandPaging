@@ -12,12 +12,6 @@ uint32_t addFrameAndOffset(const uint32_t frame, const uint32_t offset, const ui
     return ((frame << offsetBits) + offset);
 }
 
-// Used to get pure level value without offset
-uint32_t removeOffset(const uint32_t vAddr, const uint32_t offsetBits)
-{
-    return (vAddr & XZEROS(offsetBits)) >> offsetBits;
-}
-
 // Passed to logging function for vpns_pfn case
 std::vector<uint32_t> getVpnAtEachLevel(const uint32_t vpn, const PageTable& pageTable)
 {
@@ -59,7 +53,7 @@ void getSizeOfPageTable(const PageNode* pageNode, uint32_t& totalBytes)
     if (pageNode == nullptr) return;    
     totalBytes += sizeof(*pageNode);                               // Current node size
 
-    if (pageNode->nodeDepth == pageNode->pageTable.treeDepth - 1)  // Leaf node non recursive case
+    if (pageNode->nodeDepth == pageNode->pageTable.treeDepth - 1)  // Leaf node base case
     {
         auto currentNode = (LeafNode*)pageNode;
         for (auto pageMap : currentNode->pageMaps) 

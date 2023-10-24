@@ -6,6 +6,16 @@
 
 #include "page_functions.h"
 
+/*
+ * Given a virtual address, apply the given bit mask and shift right by the given number of
+ * bits. Returns the virtual page number. This function can be used to extract the VPN of
+ * any level or the full VPN by supplying the appropriate parameters.
+ */
+const uint32_t getVPNFromVirtualAddress(const uint32_t virtualAddress, const uint32_t mask, const uint32_t shift)
+{
+    return (virtualAddress & mask) >> shift;
+}
+
 // This can be seen as leaf node case
 Inserted assignVPNToFrame(PageNode* pageNode, const uint32_t jumpIndex, const uint32_t frame)
 {

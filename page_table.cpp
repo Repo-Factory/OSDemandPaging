@@ -8,16 +8,6 @@
 #include <vector>
 #include <numeric>
 
-/*
- * Given a virtual address, apply the given bit mask and shift right by the given number of
- * bits. Returns the virtual page number. This function can be used to extract the VPN of
- * any level or the full VPN by supplying the appropriate parameters.
- */
-const uint32_t getVPNFromVirtualAddress(const uint32_t virtualAddress, const uint32_t mask, const uint32_t shift)
-{
-    return (virtualAddress & mask) >> shift;
-}
-
 std::vector<uint32_t> populateBitmasks(std::vector<uint32_t>& bitmasks, const std::vector<uint32_t> treeLevels)
 {
     uint32_t current_bit = INSTRUCTION_SIZE;

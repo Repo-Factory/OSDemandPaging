@@ -46,24 +46,25 @@ uint32_t getFrame(PageTable& pageTable, const uint32_t vAddr)
 uint32_t handleNewFrame(StatsTracker& statsTracker, PageTable& pageTable, Ring& circularList, const uint32_t vAddr) 
 {
     addPageToList(circularList, vAddr, statsTracker.currentFrame);
-    statsTracker.currentFrame += insertVpn2PfnMapping(&pageTable, vAddr, statsTracker.currentFrame);
+    insertVpn2PfnMapping(&pageTable, vAddr, statsTracker.currentFrame);
+    statsTracker.currentFrame ++; 
     return NO_REPLACEMENT;
 }
 
-// Case where no grame is available and we must find a victim using our clock
+// Case where no frame is available and we must find a victim using our clock
 uint32_t handlePageReplacement(StatsTracker& statsTracker, PageTable& pageTable, Ring& circularList, const uint32_t vAddr) 
 {
-    const uint32_t vpnReplaced = replacePage(pageTable, circularList, vAddr, circularList.threshold);
-    const uint32_t vpnNoOffset = removeOffset(vpnReplaced, pageTable.offsetBits);
+    const uint32_t vAddrReplaced = replacePage(pageTable, circularList, vAddr, circularList.threshold);
+    const uint32_t vpnReplaced = getVPNFromVirtualAddress(vAddrReplaced, XZEROS(pageTable.offsetBits), pageTable.offsetBits);
     statsTracker.replacements++;
-    return vpnNoOffset;
+    return vpnReplaced;
 }
 
 // Will Check if a vAddr exists, then perform proper page insertion / replacement if needed
 uint32_t processAddress(PageTable& pageTable, Ring& circularList, StatsTracker& statsTracker, const uint32_t vAddr) 
 {
     const PageMap* pageMap = findVpn2PfnMapping(&pageTable, vAddr);
-    const bool hit = (pageMap != nullptr && pageMap->valid);
+    const bool hit = pageMap && pageMap->valid;
     const bool frameAvailable = statsTracker.currentFrame < circularList.capacity;
     statsTracker.hits += hit;
 
@@ -90,7 +91,7 @@ void handleLogging(const LoggingMode loggingMode, const PageTable& pageTable, co
             log_vpns_pfn(pageTable.treeDepth, getVpnAtEachLevel(vAddr, pageTable).data(), pfn);
             break;
         case LoggingMode::vpn2pfn_pr:
-            log_mapping(removeOffset(vAddr, pageTable.offsetBits), pfn, vpnReplaced, hit);
+            log_mapping(getVPNFromVirtualAddress(vAddr, XZEROS(pageTable.offsetBits), pageTable.offsetBits), pfn, vpnReplaced, hit);
             break;
         case LoggingMode::offset:
             print_num_inHex(vAddr & XONES(pageTable.offsetBits));
@@ -117,7 +118,6 @@ int main(int argc, char* argv[])
     
     /* END PROGRAM */
     if (loggingMode != LoggingMode::summary) exit(EXIT_SUCCESS);
-
     log_summary(
         TWO_TO_POWER_OF(pageTable.offsetBits), statsTracker.replacements, statsTracker.hits, 
         addressesProcessed, statsTracker.currentFrame, getSizeOfPageTable(&pageTable)

@@ -87,7 +87,7 @@ namespace // Validation methods will check a condition, if it is not met we will
         }
     }
 
-    void checkMinimumLevelZero(const std::vector<uint32_t>& levels)
+    void checkMinimumLevelBits(const std::vector<uint32_t>& levels)
     {
         for (const uint32_t level : levels)
         {
@@ -145,7 +145,7 @@ namespace
 
         checkInputFileValidity(trace_file_path);
         checkInputFileValidity(access_file_path);
-        checkMinimumLevelZero(levels);
+        checkMinimumLevelBits(levels);
         checkMaximumLevelsBits(levels);
 
         return MandatoryArgs{trace_file_path, access_file_path, levels};

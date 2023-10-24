@@ -15,6 +15,11 @@ constexpr const uint32_t INSTRUCTION_SIZE = 32;
 #define XONES(X) ((BIT << X) - 1)       // Macro generates a stream of X ones by moving bit over and flipping all bits behind it
 #define XZEROS(X) (XONES(32-X) << (X))  // We will also need to generate a stream of X zeros by shifting a certain number of ones
 
+constexpr int TWO_TO_POWER_OF(const uint32_t X)
+{
+    return BIT << X; // Bit shift to replicate 2^X
+}
+
 struct PageNode; // Forward declaration
 
 // With a 32 bit instruction, the number of offset bits will be 32 - the number of bits used for the levels

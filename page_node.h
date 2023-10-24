@@ -6,11 +6,6 @@
 
 #define BIT 1
 
-constexpr int TWO_TO_POWER_OF(const uint32_t X)
-{
-    return BIT << X; // Bit shift to replicate 2^X
-}
-
 struct PageTable;  // Forward Declaration
 struct PageMap;
 
