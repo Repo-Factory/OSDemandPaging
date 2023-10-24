@@ -1,5 +1,5 @@
 /*******************************************************************************
- * @author Strix Elixel
+ * @author Conner Sommerfield 824769654
  * @name demandpaging
  * 
  * @brief Perform virtual page mapping to a physical address with page replacement.
