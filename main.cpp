@@ -91,7 +91,7 @@ void handleLogging(const LoggingMode loggingMode, const PageTable& pageTable, co
             log_vpns_pfn(pageTable.treeDepth, getVpnAtEachLevel(vAddr, pageTable).data(), frame);
             break;
         case LoggingMode::vpn2pfn_pr:
-            log_mapping(getVPNFromVirtualAddress(vAddr, XZEROS(pageTable.offsetBits), pageTable.offsetBits), pfn, vpnReplaced, hit);
+            log_mapping(getVPNFromVirtualAddress(vAddr, XZEROS(pageTable.offsetBits), pageTable.offsetBits), frame, vpnReplaced, hit);
             break;
         case LoggingMode::offset:
             print_num_inHex(vAddr & XONES(pageTable.offsetBits));
@@ -113,8 +113,8 @@ int main(int argc, char* argv[])
     const uint32_t addressesProcessed = forEachAddress(args, [&](const uint32_t vAddr, const uint32_t accessMode) {
         const uint32_t vpnReplaced = processAddress(pageTable, circularList, statsTracker, vAddr);
         const uint32_t frame = getFrame(pageTable, vAddr);
-        updateAccessHistory(circularList, frame, static_cast<Mode>(accessMode));
         const uint32_t pfn = addFrameAndOffset(frame, vAddr & XONES(pageTable.offsetBits), pageTable.offsetBits); 
+        updateAccessHistory(circularList, frame, static_cast<Mode>(accessMode));
         handleLogging(loggingMode, pageTable, vAddr, frame, pfn, vpnReplaced, vpnReplaced != NO_REPLACEMENT);
     });
     
