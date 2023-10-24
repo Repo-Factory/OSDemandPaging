@@ -7,12 +7,12 @@
 #include <functional>
 #include <iostream>
 
-uint32_t forEachAddress(const Args& args, std::function<void(const uint32_t, const uint32_t)> performOperations);
+uint32_t forEachAddress(const Args& args, const std::function<void(const uint32_t, const uint32_t)> performOperations);
 uint32_t addFrameAndOffset(const uint32_t frame, const uint32_t offset, const uint32_t offsetBits);
 uint32_t removeOffset(const uint32_t vAddr, const uint32_t offsetBits);
 std::vector<uint32_t> getVpnAtEachLevel(const uint32_t vpn, const PageTable& pageTable);
 void exitIfBitMaskFlag(const Args& args, PageTable& pageTable);
-const uint32_t getSizeOfPageTable(PageTable* pageTable);
-void getSizeOfPageTable(PageNode* pageNode, uint32_t& totalBytes);
+const uint32_t getSizeOfPageTable(const PageTable* pageTable);
+void getSizeOfPageTable(const PageNode* pageNode, uint32_t& totalBytes);
 
 #endif 

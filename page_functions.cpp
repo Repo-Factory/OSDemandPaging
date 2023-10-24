@@ -69,7 +69,7 @@ PageMap* findVpn2PfnMapping(PageTable* pageTable, const uint32_t vpn)
 //Given a page table and a VPN, return the mapping of the VPN to physical frame 
 PageMap* findVpn2PfnMapping(PageNode* pageNode, const uint32_t vpn)
 {
-    if (pageNode==NULL) return NULL;
+    if (pageNode==nullptr) return nullptr;
     const uint32_t jumpIndex = getJumpIndex(pageNode, vpn);
     if (pageNode->nodeDepth == pageNode->pageTable.treeDepth - 1)  // -1 To account for Index starting from 0 
     {

@@ -125,6 +125,9 @@ namespace // Validation methods will check a condition, if it is not met we will
 
 namespace
 {
+    /**
+     * Retrieve and Validate Input Files; Place Level Bits Into Vector (for dynamic amount of levels) And Verify 
+     */
     MandatoryArgs getMandatoryArgs(int argc, char* argv[])
     {
         if (argc - optind < NUM_MANDATORY_ARGS) {
@@ -148,6 +151,9 @@ namespace
         return MandatoryArgs{trace_file_path, access_file_path, levels};
     }
 
+    /**
+     * Use optargs to populate n:f:a:l flags
+     */
     OptionalArgs getOptionalArgs(int argc, char* argv[])
     {
         OptionalArgs optionalArgs;

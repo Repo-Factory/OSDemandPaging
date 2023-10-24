@@ -39,7 +39,7 @@ void exitIfBitMaskFlag(const Args& args, PageTable& pageTable)
 }
 
 // Add all fields of our page table and recurse through nodes to get size of page table in bytes
-const uint32_t getSizeOfPageTable(PageTable* pageTable)
+const uint32_t getSizeOfPageTable(const PageTable* pageTable)
 {
     uint32_t totalBytes = 0;
     totalBytes += sizeof(pageTable->bitMasks);
@@ -54,7 +54,7 @@ const uint32_t getSizeOfPageTable(PageTable* pageTable)
 
 // Recursive function which will take reference to what will eventually be our total, we will go through each node, adding it's
 // size to the total, then recursively call if necessary or simply add all our pagemap sizes.
-void getSizeOfPageTable(PageNode* pageNode, uint32_t& totalBytes)
+void getSizeOfPageTable(const PageNode* pageNode, uint32_t& totalBytes)
 {   
     if (pageNode == nullptr) return;    
     totalBytes += sizeof(*pageNode);                               // Current node size
@@ -79,7 +79,7 @@ void getSizeOfPageTable(PageNode* pageNode, uint32_t& totalBytes)
 
 namespace // File iteration helpers
 {
-    const uint32_t convertAccessBit(char accessBit)
+    const uint32_t convertAccessBit(const char accessBit)
     {
         if (accessBit == '0')
             return 0;
@@ -115,7 +115,7 @@ namespace // File iteration helpers
 }
 
 // This is main loop mechanism that will iterate through the two input files, grabbing the appropriate values to pass on to main function
-uint32_t forEachAddress(const Args& args, std::function<void(const uint32_t, const uint32_t)> performOperations)
+uint32_t forEachAddress(const Args& args, const std::function<void(const uint32_t, const uint32_t)> performOperations)
 {
     int addressesProcessed =              0;
     FILE* traceFile =                     fopen(args.mandatoryArgs.traceFile, READ_MODE);
