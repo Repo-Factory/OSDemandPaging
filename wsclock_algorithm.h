@@ -22,13 +22,15 @@ struct Entry
 
 struct Ring
 {
-    Ring(const int capacity)
+    Ring(const int capacity, const int threshold)
         : entries(capacity),
-        capacity{capacity} 
+        capacity{capacity},
+        threshold{threshold}
     {}
     int current_index = 0;
     std::time_t elapsed_time = 0;
-    int capacity;
+    const int threshold;
+    const int capacity;
     std::vector<Entry> entries;
 };
 
